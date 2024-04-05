@@ -1,81 +1,38 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  FlatList,
-  Pressable,
-  Image,
-  TextInput,
-} from "react-native";
-import React, { useState, useEffect, useTransition } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import jwt_decode from "jwt-decode";
 import axios from "axios";
-import { Ionicons, Entypo, Feather, FontAwesome } from "@expo/vector-icons";
-import { SimpleLineIcons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
+import {
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    FlatList,
+    Pressable,
+    Image,
+    TextInput,
+  } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { REACT_APP_DEV_MODE } from "@env";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { useRouter } from "expo-router";
-import {REACT_APP_DEV_MODE} from '@env';
-import { I18n } from 'i18n-js';
-import transalations from "../../../transalations";
-import { useDispatch, useSelector } from "react-redux";
-import { increment } from "../../../store/couterSlice";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { Ionicons, Entypo, Feather, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+import { SimpleLineIcons } from "@expo/vector-icons";
 
-
-const i18n = new I18n(transalations);
-// i18n.enableFallback = true;
-// i18n.locale = 'en';
-
-
-const index = () => {
-  const [userId, setUserId] = useState("");
-  const [user, setUser] = useState();
-  const [posts, setPosts] = useState([]);
-  const a = useTransition();
-  console.log('a: ', a);
-  console.log('i18n local: ', i18n.locale);
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = await AsyncStorage.getItem("authToken");
-      const decodedToken = jwt_decode(token);
-      const userId = decodedToken.userId;
-      setUserId(userId);
-    };
-
-    fetchUser();
-  }, []);
-  useEffect(() => {
-    if (userId) {
-      fetchUserProfile();
-    }
-  }, [userId]);
-  const fetchUserProfile = async () => {
+const DetailPost = () => {
+  const { slug } = useLocalSearchParams();
+  const [post, setPost] = useState();
+  const fetchPost = async () => {
     try {
-      const response = await axios.get(
-        `${REACT_APP_DEV_MODE}/profile/${userId}`
-      );
-      const userData = response.data.user;
-      setUser(userData);
+      const response = await axios.get(`${REACT_APP_DEV_MODE}/posts/${slug}`);
+      console.log("data: ", response.data);
+      setPost(response.data);
     } catch (error) {
       console.log("error fetching user profile", error);
     }
-  };
+  }
   useEffect(() => {
-    const fetchAllPosts = async () => {
-      try {
-        const response = await axios.get(`${REACT_APP_DEV_MODE}/all`);
-        console.log("posts: ", response.data.posts);
-        setPosts(response.data.posts);
-      } catch (error) {
-        console.log("error fetching posts", error);
-      }
-    };
-    fetchAllPosts();
-  }, []);
-
+    fetchPost();
+  }, [slug]);
   const MAX_LINES = 2;
   const [showfullText, setShowfullText] = useState(false);
   const toggleShowFullText = () => {
@@ -95,66 +52,30 @@ const index = () => {
       console.log("Error liking/unliking the post", error);
     }
   };
-  const router = useRouter();
+  const [content, setContent] = useState('');
   const handleComment = async (postId) => {
-    console.log('postId: ', postId);
-    router.push(`/post/${postId}`);
-  };
-  const count = useSelector((state) => state.counter.value)
-  const dispatch = useDispatch();
+    try {
+        const response = await axios.post(
+          `${REACT_APP_DEV_MODE}/comment/${postId}/${userId}`,
+            {
+                content: content
+            }
+        );
+        if (response.status === 200) {
+          const updatedPost = response.data.post;
+          setIsLiked(updatedPost.likes.some((like) => like.user === userId));
+        }
+      } catch (error) {
+        console.log("Error liking/unliking the post", error);
+      }
+  }
   return (
     <SafeAreaView>
-      <View
-        style={{
-          padding: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 4,
-        }}
-      >
-        <Pressable onPress={() => router.push("/home/profile")}>
-          <Image
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-            source={{ uri: user?.profileImage || null }}
-          />
-        </Pressable>
-
-        <Pressable
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginHorizontal: 7,
-            gap: 10,
-            backgroundColor: "white",
-            borderRadius: 3,
-            height: 30,
-            flex: 1,
-          }}
-        >
-          <AntDesign
-            style={{ marginLeft: 10 }}
-            name="search1"
-            size={20}
-            color="black"
-          />
-          <TextInput placeholder="Search" />
-        </Pressable>
-
-        <Ionicons name="chatbox-ellipses-outline" size={24} color="black" />
-      </View>
-      <Text>{count}</Text>
-      <Pressable onPress={() => dispatch(increment())}>
-          <Text>Tang</Text>
-        </Pressable>
-      <FlatList
-        data={posts}
-        renderItem={({ item }, index) => (
-          <View key={item._id}>
+        <View key={post?._id}>
             <View
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                marginHorizontal: 10,
               }}
             >
               <View
@@ -162,12 +83,12 @@ const index = () => {
               >
                 <Image
                   style={{ width: 60, height: 60, borderRadius: 30 }}
-                  source={{ uri: item?.user?.profileImage || null }}
+                  source={{ uri: post?.user?.profileImage || null }}
                 />
 
                 <View style={{ flexDirection: "column", gap: 2 }}>
                   <Text style={{ fontSize: 15, fontWeight: "600" }}>
-                    {item?.user?.name}
+                    {post?.user?.name}
                   </Text>
                   <Text
                     numberOfLines={1}
@@ -182,7 +103,7 @@ const index = () => {
                     Engineer Graduate | LinkedIn Member
                   </Text>
                   <Text style={{ color: "gray" }}>
-                    {moment(item.createdAt).format("MMMM Do YYYY")}
+                    {moment(post?.createdAt).format("MMMM Do YYYY")}
                   </Text>
                 </View>
               </View>
@@ -202,7 +123,7 @@ const index = () => {
                 style={{ fontSize: 15 }}
                 numberOfLines={showfullText ? undefined : MAX_LINES}
               >
-                {item?.description}
+                {post?.description}
               </Text>
               {!showfullText && (
                 <Pressable onPress={toggleShowFullText}>
@@ -211,14 +132,14 @@ const index = () => {
               )}
             </View>
 
-            {item?.imageUrl && (
+            {post?.imageUrl && (
               <Image
                 style={{ width: "100%", height: 240 }}
-                source={{ uri: item?.imageUrl }}
+                source={{ uri: post?.imageUrl }}
               />
             )}
 
-            {item?.likes?.length > 0 && (
+            {post?.likes?.length > 0 && (
               <View
                 style={{
                   padding: 10,
@@ -228,7 +149,7 @@ const index = () => {
                 }}
               >
                 <SimpleLineIcons name="like" size={16} color="#0072b1" />
-                <Text style={{ color: "gray" }}>{item?.likes?.length}</Text>
+                <Text style={{ color: "gray" }}>{post?.likes?.length}</Text>
               </View>
             )}
 
@@ -248,7 +169,7 @@ const index = () => {
                 marginVertical: 10,
               }}
             >
-              <Pressable onPress={() => handleLikePost(item?._id)}>
+              <Pressable onPress={() => handleLikePost(post?._id)}>
                 <AntDesign
                   style={{ textAlign: "center" }}
                   name="like2"
@@ -266,7 +187,7 @@ const index = () => {
                   Like
                 </Text>
               </Pressable>
-              <Pressable onPress={() => handleComment(item?._id)}>
+              <Pressable onPress={() => handleComment(post?._id)}>
                 <FontAwesome
                   name="comment-o"
                   size={20}
@@ -310,13 +231,8 @@ const index = () => {
               </Pressable>
             </View>
           </View>
-        )}
-        keyExtractor={(item) => item._id}
-      />
     </SafeAreaView>
   );
 };
 
-export default index;
-
-const styles = StyleSheet.create({});
+export default DetailPost;

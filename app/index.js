@@ -1,16 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Redirect } from 'expo-router'
-import {REACT_APP_DEV_MODE} from '@env';
-const index = (REACT_APP_DEV_MODE) => {
-  console.log()
+import { Redirect } from "expo-router";
+import React from "react";
+
+const index = () => {
   return (
-   <Redirect href="/(authenticate)/login"/>
-  )
-}
+      <Redirect href="/(authenticate)/login" />
+  );
+};
 
-export default index
-
-const styles = StyleSheet.create({})
+export default index;
 
 //index.js => /

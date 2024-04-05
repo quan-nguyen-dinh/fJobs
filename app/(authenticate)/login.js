@@ -2,11 +2,11 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   Image,
   KeyboardAvoidingView,
   TextInput,
   Pressable,
+  Switch,
 } from "react-native";
 import React, { useState,useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -15,6 +15,14 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {REACT_APP_DEV_MODE} from '@env'
+import { getLocales } from 'expo-localization';
+import * as Localization from 'expo-localization';
+import { I18n } from 'i18n-js';
+import transalations from "../../transalations";
+import { useSelector, useDispatch } from 'react-redux';
+import { selectCount } from "../../store/couterSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { changeLocale } from "../../store/i18n";
 
 const login = () => {
   const [email, setEmail] = useState("");
@@ -22,6 +30,8 @@ const login = () => {
   const [err, setErr] = useState("");
   const router = useRouter();
   console.log('API_URL: ', REACT_APP_DEV_MODE);
+  const deviceLanguage = getLocales()[0].languageCode;
+  console.log('deivceLnage: ', deviceLanguage);
   useEffect(() => {
     const checkLoginStatus = async () => {
         try{
@@ -52,6 +62,17 @@ const login = () => {
           console.log('login error: ', error);
       })
   }
+  const i18n = useSelector(state => state.transalation.i18n);
+  const dispatch = useDispatch();
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => !previousState);
+    const selectedLanguage = isEnabled ? 'en' : 'vn';
+    console.log('selectedLanauge: ', selectedLanguage);
+    dispatch(changeLocale(selectedLanguage));
+  };
+  // const count = useSelector((state) => state.counter.value)
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
@@ -78,6 +99,21 @@ const login = () => {
             Log in to your Account
           </Text>
         </View>
+        <View style={styles.container}>
+          {/* {{count}} */}
+      <Text style={styles.text}>
+        {i18n?.t('welcome')} {i18n?.t('name')}
+      </Text>
+      <Text>Current locale: {i18n?.locale}</Text>
+      <Text>Device locale: {Localization.getLocales()[0].languageCode}</Text>
+      <Switch
+        trackColor={{false: '#767577', true: '#81b0ff'}}
+        thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+        ios_backgroundColor="#3e3e3e"
+        onValueChange={toggleSwitch}
+        value={isEnabled}
+      />
+    </View>
 
         <View style={{ marginTop: 70 }}>
           <View
@@ -106,7 +142,7 @@ const login = () => {
                 width: 300,
                 fontSize: email ? 18 : 18,
               }}
-              placeholder="enter your Email"
+              placeholder={i18n?.t('plEmail')}
             />
           </View>
 
@@ -138,7 +174,7 @@ const login = () => {
                   width: 300,
                   fontSize: password ? 18 : 18,
                 }}
-                placeholder="enter your Password"
+                placeholder={i18n?.t('plPassword')}
               />
             </View>
           </View>
@@ -154,7 +190,7 @@ const login = () => {
             <Text>Keep me logged in</Text>
 
             <Text style={{ color: "#007FFF", fontWeight: "500" }}>
-              Forgot Password
+            {i18n?.t('btnFortgotPass')}
             </Text>
           </View>
 
@@ -179,7 +215,7 @@ const login = () => {
                 fontWeight: "bold",
               }}
             >
-              Login
+              {i18n?.t('btnLogin')}
             </Text>
           </Pressable>
 

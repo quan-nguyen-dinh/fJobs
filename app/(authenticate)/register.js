@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   Image,
   Pressable,
   KeyboardAvoidingView,
@@ -17,6 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import axios from "axios"
 import {REACT_APP_DEV_MODE} from '@env';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const register = () => {
   const [email, setEmail] = useState("");
