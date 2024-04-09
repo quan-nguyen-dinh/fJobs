@@ -261,8 +261,19 @@ const profile = () => {
         </View>
       </View>
 
-      <Pressable onPress={logout}>
-        <Text>Logout</Text>
+      <Pressable 
+        style={{
+          width: 60, 
+          height: 30,
+          marginTop: 10, 
+          marginLeft: 15,
+          backgroundColor: '#d4cac9',
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderRadius: 50
+        }} 
+        onPress={logout}>
+        <Text style={{color: '#c21806'}}>Logout</Text>
       </Pressable>
     </View>
   );

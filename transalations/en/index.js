@@ -5,6 +5,7 @@ export default en = {
   plPassword: "Enter your password",
   btnFortgotPass: "Forgot Password",
   btnLogin: "Login",
+  btnRegister: "Register",
   tabFirst: "Home",
   tabSecond: "Network",
   tabThird: "Post",

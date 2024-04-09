@@ -79,26 +79,13 @@ const login = () => {
     >
       <View>
         <Image
-          style={{ width: 150, height: 100, resizeMode: "contain" }}
-          source={{
-            uri: "https://www.freepnglogos.com/uploads/linkedin-logo-transparent-png-25.png",
-          }}
+          style={{ width: 130, height: 80, resizeMode: "contain", marginTop: 100 }}
+          source={require('../../assets/logo.jpg')}
         />
       </View>
 
       <KeyboardAvoidingView>
-        <View style={{ alignItems: "center" }}>
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: "bold",
-              marginTop: 12,
-              color: "#041E42",
-            }}
-          >
-            Log in to your Account
-          </Text>
-        </View>
+        
         <View style={styles.container}>
           {/* {{count}} */}
       <Text style={styles.text}>
@@ -115,24 +102,21 @@ const login = () => {
       />
     </View>
 
-        <View style={{ marginTop: 70 }}>
+        <View style={{ marginTop: 30 }}>
           <View
             style={{
               flexDirection: "row",
               alignItems: "center",
               gap: 5,
-              backgroundColor: "#E0E0E0",
+              backgroundColor: "white",
               paddingVertical: 5,
-              borderRadius: 5,
+              borderRadius: 25,
               marginTop: 30,
+              borderWidth: 1,
+              borderColor: '#D2D7D3'
             }}
           >
-            <MaterialIcons
-              style={{ marginLeft: 8 }}
-              name="email"
-              size={24}
-              color="gray"
-            />
+           
             <TextInput
               value={email}
               onChangeText={(text) => setEmail(text)}
@@ -141,6 +125,7 @@ const login = () => {
                 marginVertical: 10,
                 width: 300,
                 fontSize: email ? 18 : 18,
+                marginLeft: 20
               }}
               placeholder={i18n?.t('plEmail')}
             />
@@ -152,59 +137,40 @@ const login = () => {
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 5,
-                backgroundColor: "#E0E0E0",
+                backgroundColor: "white",
                 paddingVertical: 5,
-                borderRadius: 5,
-                marginTop: 30,
+                borderRadius: 25,
+                marginTop: 10,
+                borderWidth: 1,
+                borderColor: '#D2D7D3'
               }}
             >
-              <AntDesign
-                style={{ marginLeft: 8 }}
-                name="lock1"
-                size={24}
-                color="gray"
-              />
+              
               <TextInput
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 secureTextEntry={true}
                 style={{
                   color: "gray",
+                  marginLeft: 20,
                   marginVertical: 10,
                   width: 300,
                   fontSize: password ? 18 : 18,
+                  
                 }}
                 placeholder={i18n?.t('plPassword')}
               />
             </View>
           </View>
 
-          <View
-            style={{
-              marginTop: 12,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text>Keep me logged in</Text>
-
-            <Text style={{ color: "#007FFF", fontWeight: "500" }}>
-            {i18n?.t('btnFortgotPass')}
-            </Text>
-          </View>
-
-          <View style={{ marginTop: 80 }} />
-
           <Pressable
           onPress={handleLogin}
             style={{
-              width: 200,
-              backgroundColor: "#0072b1",
-              borderRadius: 6,
-              marginLeft: "auto",
-              marginRight: "auto",
+              backgroundColor: "#1877F2",
+              borderRadius: 50,
               padding: 15,
+              marginTop: 25
+              
             }}
           >
             <Text
@@ -213,18 +179,53 @@ const login = () => {
                 color: "white",
                 fontSize: 16,
                 fontWeight: "bold",
+
               }}
             >
               {i18n?.t('btnLogin')}
             </Text>
           </Pressable>
 
+          <View
+            style={{
+              marginTop: 12,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: "gray", fontWeight: "600", fontSize:16, marginTop: 5 }}>
+            {i18n?.t('btnFortgotPass')}
+            </Text>
+          </View>
+
+          <View style={{ marginTop: 80 }} />
+
+          
+
           <Pressable
             onPress={() => router.replace("/register")}
-            style={{ marginTop: 15 }}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 50,
+              marginTop: 25,
+              height: 40,
+              borderWidth: 1,
+              borderColor: '#1877F2',
+              
+            }}
           >
-            <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
-              Don't have an account? Sign Up
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#1877F2",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              {i18n?.t('btnRegister')}
             </Text>
           </Pressable>
         </View>

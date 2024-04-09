@@ -52,9 +52,7 @@ const register = () => {
       <View>
         <Image
           style={{ width: 150, height: 100, resizeMode: "contain" }}
-          source={{
-            uri: "https://www.freepnglogos.com/uploads/linkedin-logo-transparent-png-25.png",
-          }}
+          source={require('../../assets/logo.jpg')}
         />
       </View>
 
@@ -62,7 +60,7 @@ const register = () => {
         <View style={{ alignItems: "center" }}>
           <Text
             style={{
-              fontSize: 17,
+              fontSize: 20,
               fontWeight: "bold",
               marginTop: 12,
               color: "#041E42",
@@ -78,18 +76,14 @@ const register = () => {
               flexDirection: "row",
               alignItems: "center",
               gap: 5,
-              backgroundColor: "#E0E0E0",
+              backgroundColor: "white",
               paddingVertical: 5,
-              borderRadius: 5,
-              marginTop: 30,
+              borderRadius: 25,
+              marginTop: 20,
+              borderWidth: 1,
+              borderColor: '#D2D7D3'
             }}
           >
-            <Ionicons
-              name="person"
-              size={24}
-              color="gray"
-              style={{ marginLeft: 8 }}
-            />
             <TextInput
               value={name}
               onChangeText={(text) => setName(text)}
@@ -98,6 +92,7 @@ const register = () => {
                 marginVertical: 10,
                 width: 300,
                 fontSize: name ? 18 : 18,
+                marginLeft: 20
               }}
               placeholder="enter your name"
             />
@@ -108,18 +103,14 @@ const register = () => {
               flexDirection: "row",
               alignItems: "center",
               gap: 5,
-              backgroundColor: "#E0E0E0",
+              backgroundColor: "white",
               paddingVertical: 5,
-              borderRadius: 5,
+              borderRadius: 25,
               marginTop: 30,
+              borderWidth: 1,
+              borderColor: '#D2D7D3'
             }}
           >
-            <MaterialIcons
-              style={{ marginLeft: 8 }}
-              name="email"
-              size={24}
-              color="gray"
-            />
             <TextInput
               value={email}
               onChangeText={(text) => setEmail(text)}
@@ -128,6 +119,7 @@ const register = () => {
                 marginVertical: 10,
                 width: 300,
                 fontSize: email ? 18 : 18,
+                marginLeft: 20
               }}
               placeholder="enter your Email"
             />
@@ -139,18 +131,14 @@ const register = () => {
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 5,
-                backgroundColor: "#E0E0E0",
+                backgroundColor: "white",
                 paddingVertical: 5,
-                borderRadius: 5,
+                borderRadius: 25,
                 marginTop: 30,
+                borderWidth: 1,
+                borderColor: '#D2D7D3'
               }}
             >
-              <AntDesign
-                style={{ marginLeft: 8 }}
-                name="lock1"
-                size={24}
-                color="gray"
-              />
               <TextInput
                 value={password}
                 onChangeText={(text) => setPassword(text)}
@@ -160,23 +148,25 @@ const register = () => {
                   marginVertical: 10,
                   width: 300,
                   fontSize: password ? 18 : 18,
+                  marginLeft: 20
                 }}
                 placeholder="enter your Password"
               />
             </View>
 
           <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              backgroundColor: "#E0E0E0",
-              paddingVertical: 5,
-              borderRadius: 5,
-              marginTop: 30,
-            }}
+           style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 5,
+            backgroundColor: "white",
+            paddingVertical: 5,
+            borderRadius: 25,
+            marginTop: 30,
+            borderWidth: 1,
+            borderColor: '#D2D7D3'
+          }}
           >
-            <Entypo name="image" size={24} color="gray" style={{marginLeft:8}} />
             <TextInput
               value={image}
               onChangeText={(text) => setImage(text)}
@@ -185,40 +175,23 @@ const register = () => {
                 marginVertical: 10,
                 width: 300,
                 fontSize: image ? 18 : 18,
+                marginLeft: 20
               }}
               placeholder="enter your image url"
             />
           </View>
 
-        
 
-          <View
-            style={{
-              marginTop: 12,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text>Keep me logged in</Text>
-
-            <Text style={{ color: "#007FFF", fontWeight: "500" }}>
-              Forgot Password
-            </Text>
-          </View>
-
-          <View style={{ marginTop: 80 }} />
 
           <Pressable
          onPress={handleRegister}
-            style={{
-              width: 200,
-              backgroundColor: "#0072b1",
-              borderRadius: 6,
-              marginLeft: "auto",
-              marginRight: "auto",
-              padding: 15,
-            }}
+          style={{
+            backgroundColor: "#1877F2",
+            borderRadius: 50,
+            padding: 15,
+            marginTop: 35,
+            
+          }}
           >
             <Text
               style={{
@@ -237,7 +210,8 @@ const register = () => {
             style={{ marginTop: 15 }}
           >
             <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>
-              Already have an account? Sign up
+              Already have an account? 
+              <Text style={{color:'#1877F2'}}> Sign in</Text>
             </Text>
           </Pressable>
         </View>

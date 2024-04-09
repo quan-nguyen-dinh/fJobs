@@ -12,7 +12,7 @@ import React, { useState, useEffect, useTransition } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
-import { Ionicons, Entypo, Feather, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, Entypo,EvilIcons, Feather, FontAwesome, Octicons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
@@ -103,21 +103,40 @@ const index = () => {
   const count = useSelector((state) => state.counter.value)
   const dispatch = useDispatch();
   return (
-    <SafeAreaView>
+    <SafeAreaView style ={{backgroundColor: 'white'}}>
       <View
         style={{
           padding: 10,
           flexDirection: "row",
           alignItems: "center",
           gap: 4,
+          borderBottomWidth: 0.5,
+          borderBottomColor:'gray'
         }}
       >
-        <Pressable onPress={() => router.push("/home/profile")}>
-          <Image
-            style={{ width: 30, height: 30, borderRadius: 15 }}
-            source={{ uri: user?.profileImage || null }}
-          />
-        </Pressable>
+        <View 
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            
+          }}
+        >
+          
+          <Pressable onPress={() => router.push("/home/profile")}>
+            <Image
+              style={{ width: 35, height: 35, borderRadius: 15 }}
+              source={{ uri: user?.profileImage || null }}
+            />
+          </Pressable>
+          <Text 
+            style={{
+              paddingLeft: 5, 
+              fontSize: 18, 
+              fontWeight: 800, 
+              color: '#1877F2'}}
+          >QQ Talk</Text>
+        </View>
 
         <Pressable
           style={{
@@ -126,9 +145,11 @@ const index = () => {
             marginHorizontal: 7,
             gap: 10,
             backgroundColor: "white",
-            borderRadius: 3,
+            borderRadius: 50,
             height: 30,
             flex: 1,
+            borderWidth: 1,
+            borderColor:'gray'
           }}
         >
           <AntDesign
@@ -140,16 +161,13 @@ const index = () => {
           <TextInput placeholder="Search" />
         </Pressable>
 
-        <Ionicons name="chatbox-ellipses-outline" size={24} color="black" />
+        <Ionicons name="chatbox-ellipses-outline" size={24} color="#1877F2" />
       </View>
-      <Text>{count}</Text>
-      <Pressable onPress={() => dispatch(increment())}>
-          <Text>Tang</Text>
-        </Pressable>
+
       <FlatList
         data={posts}
         renderItem={({ item }, index) => (
-          <View key={item._id}>
+          <View key={item._id} style={{backgroundColor:'white'}}>
             <View
               style={{
                 flexDirection: "row",
@@ -158,10 +176,10 @@ const index = () => {
               }}
             >
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingTop:3 }}
               >
                 <Image
-                  style={{ width: 60, height: 60, borderRadius: 30 }}
+                  style={{ width: 50, height: 50, borderRadius: 30 }}
                   source={{ uri: item?.user?.profileImage || null }}
                 />
 
@@ -169,34 +187,36 @@ const index = () => {
                   <Text style={{ fontSize: 15, fontWeight: "600" }}>
                     {item?.user?.name}
                   </Text>
-                  <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={{
-                      width: 230,
-                      color: "gray",
-                      fontSize: 15,
-                      fontWeight: "400",
-                    }}
-                  >
-                    Engineer Graduate | LinkedIn Member
-                  </Text>
-                  <Text style={{ color: "gray" }}>
-                    {moment(item.createdAt).format("MMMM Do YYYY")}
-                  </Text>
+                  <View style={{flexDirection:'row', alignItems:'center'}}>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={{
+                        color: "gray",
+                        fontSize: 15,
+                        fontWeight: "400",
+                      }}
+                    >
+                      Dev
+                    </Text>
+                    <Entypo name="dot-single" size={12} color="gray" />
+                    <Text style={{ color: "gray",fontSize: 14 }}>
+                      {moment(item.createdAt).format("MMMM Do YYYY")}
+                    </Text>
+                  </View>
                 </View>
               </View>
 
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
-                <Entypo name="dots-three-vertical" size={20} color="black" />
-                <Feather name="x" size={20} color="black" />
+                <Feather name="more-horizontal" size={24} color="black" />
+                <Ionicons name="close" size={24} color="black" />
               </View>
             </View>
 
             <View
-              style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 12 }}
+              style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 12}}
             >
               <Text
                 style={{ fontSize: 15 }}
@@ -206,7 +226,7 @@ const index = () => {
               </Text>
               {!showfullText && (
                 <Pressable onPress={toggleShowFullText}>
-                  <Text>See more</Text>
+                  <Text style={{color:'#1877F2'}}>See more</Text>
                 </Pressable>
               )}
             </View>
@@ -228,17 +248,17 @@ const index = () => {
                 }}
               >
                 <SimpleLineIcons name="like" size={16} color="#0072b1" />
-                <Text style={{ color: "gray" }}>{item?.likes?.length}</Text>
+                <Text style={{ color: "black" }}>{item?.likes?.length}</Text>
               </View>
             )}
 
-            <View
+            {/* <View
               style={{
                 height: 2,
-                borderColor: "#E0E0E0",
+                borderColor: "black",
                 borderWidth: 2,
               }}
-            />
+            /> */}
 
             <View
               style={{
@@ -246,15 +266,19 @@ const index = () => {
                 alignItems: "center",
                 justifyContent: "space-around",
                 marginVertical: 10,
+                paddingTop: 10,
+                borderTopWidth:0.2,
+                borderTopColor: 'gray'
               }}
             >
-              <Pressable onPress={() => handleLikePost(item?._id)}>
+              <Pressable style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}} onPress={() => handleLikePost(item?._id)}>
                 <AntDesign
                   style={{ textAlign: "center" }}
                   name="like2"
                   size={24}
                   color={isLiked ? "#0072b1" : "gray"}
                 />
+                <Text> </Text>
                 <Text
                   style={{
                     textAlign: "center",
@@ -266,13 +290,14 @@ const index = () => {
                   Like
                 </Text>
               </Pressable>
-              <Pressable onPress={() => handleComment(item?._id)}>
+              <Pressable style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => handleComment(item?._id)}>
                 <FontAwesome
                   name="comment-o"
                   size={20}
                   color="gray"
                   style={{ textAlign: "center" }}
                 />
+                <Text> </Text>
                 <Text
                   style={{
                     textAlign: "center",
@@ -284,13 +309,9 @@ const index = () => {
                   Comment
                 </Text>
               </Pressable>
-              <Pressable>
-                <Ionicons
-                  name="md-share-outline"
-                  size={20}
-                  color="gray"
-                  style={{ textAlign: "center" }}
-                />
+              <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
+                <AntDesign name="link" size={22} color="gray" />                  
+                <Text> </Text>
                 <Text
                   style={{
                     marginTop: 2,
@@ -299,16 +320,24 @@ const index = () => {
                     color: "gray",
                   }}
                 >
-                  repost
+                  Copy
                 </Text>
               </Pressable>
-              <Pressable>
-                <Feather name="send" size={20} color="gray" />
+              <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
+                <AntDesign name="sharealt" size={23} color="gray" />
+                <Text> </Text>
                 <Text style={{ marginTop: 2, fontSize: 12, color: "gray" }}>
-                  Send
+                  Share
                 </Text>
               </Pressable>
             </View>
+            <View
+              style={{
+                height: 2,
+                borderColor: "#D2D7D3",
+                borderWidth: 2,
+              }}
+            />
           </View>
         )}
         keyExtractor={(item) => item._id}
