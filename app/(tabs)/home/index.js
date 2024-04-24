@@ -66,7 +66,7 @@ const index = () => {
   useEffect(() => {
     const fetchAllPosts = async () => {
       try {
-        const response = await axios.get(`${REACT_APP_DEV_MODE}/all`);
+        const response = await axios.get(`${REACT_APP_DEV_MODE}/posts/all`);
         console.log("posts: ", response.data.posts);
         setPosts(response.data.posts);
       } catch (error) {

@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   Image,
   Pressable,
   TextInput,
@@ -18,6 +17,7 @@ import { firebase } from "../../../firebase";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import {REACT_APP_DEV_MODE} from '@env';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const index = () => {
   const [description, setDescription] = useState("");
@@ -109,7 +109,6 @@ const index = () => {
     }
   };
   return (
-    // <ScrollView style={{ flex: 1, backgroundColor: "white" }}>
     <SafeAreaView>
       <View
         style={{
@@ -213,7 +212,6 @@ const index = () => {
         <Text>Media</Text>
       </Pressable>
     </SafeAreaView>
-    // </ScrollView>
   );
 };
 

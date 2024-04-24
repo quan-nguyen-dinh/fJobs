@@ -18,7 +18,6 @@ const jwt = require("jsonwebtoken");
 
 route(app);
 
-
 app.listen(port, () => {
   console.log("Server is running on port "+port);
 });
@@ -192,21 +191,6 @@ const Post = require("./models/post");
 //   }
 // });
 
-app.get("/posts/:postId", async (req, res) => {
-  try {
-    const postId = req.params.postId;
-    console.log('postId: ', postId);
-    const post = await Post.findById(postId);
-    console.log('post: ', post);
-    if (!post) {
-      return res.status(400).json( { message: "Post not found"} );
-    }
-    res.status(200).json(post);
-  } catch (error) {
-    console.log('error', error);
-    res.status(500).json({ message: "Error retireving post"});
-  }
-})
 //send a connection request
 app.post("/connection-request", async (req, res) => {
   try {
@@ -315,16 +299,7 @@ app.post("/create", async (req, res) => {
 });
 
 //endpoint to fetch all the posts
-app.get("/all", async (req, res) => {
-  try {
-    const posts = await Post.find().populate("user", "name profileImage");
 
-    res.status(200).json({ posts });
-  } catch (error) {
-    console.log("error fetching all the posts", error);
-    res.status(500).json({ message: "Error fetching all the posts" });
-  }
-});
 
 //endpoints to like a post
 app.post("/like/:postId/:userId", async (req, res) => {
