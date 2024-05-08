@@ -29,7 +29,7 @@ const login = () => {
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
   const router = useRouter();
-  console.log('API_URL: ', REACT_APP_DEV_MODE);
+  console.log('API_URL: ', {REACT_APP_DEV_MODE});
   const deviceLanguage = getLocales()[0].languageCode;
   console.log('deivceLnage: ', deviceLanguage);
   useEffect(() => {
@@ -52,12 +52,12 @@ const login = () => {
           email: email,
           password: password
       }
-      console.log('user: ', user);
+      // console.log('user: ', user);
       axios.post(`${REACT_APP_DEV_MODE}/login`, user).then((response) => {
           console.log(response);
           const token = response.data.token;
           AsyncStorage.setItem("authToken",token);
-          router.replace("/(tabs)/home")
+          router.replace("/(tabs)/home");
       }).catch(error=>{
           console.log('login error: ', error);
       })

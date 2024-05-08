@@ -22,6 +22,12 @@ app.listen(port, () => {
   console.log("Server is running on port "+port);
 });
 
+app.get('/', (req, res) => {
+  const host = req.hostname;
+  const ip = req.ip;
+  res.send(`Hostname: ${host}`);
+});
+
 const User = require("./models/user");
 const Post = require("./models/post");
 

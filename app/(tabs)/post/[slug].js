@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { REACT_APP_DEV_MODE } from "@env";
 import React, { useState, useEffect } from "react";
 import moment from "moment";
-import { Ionicons, Entypo, Feather, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, Entypo, Feather, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -129,14 +129,39 @@ const DetailPost = () => {
               </Text>
             </View>
           </View>
-
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <Image
+              style={{ width: 50, height: 50, borderRadius: 25 }}
+              source={{ uri: post?.user?.profileImage || undefined }}
+            />
+            <View style={{ flex: 1, marginLeft: 10 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>{post?.user?.name}</Text>
+              <Text style={{ color: "gray", fontSize: 14 }}>
+                {moment(post?.createdAt).format("MMMM Do, YYYY")}
+              </Text>
+            </View>
             <Entypo name="dots-three-vertical" size={20} color="black" />
-            <Feather name="x" size={20} color="black" />
           </View>
+          
         </View>
 
-        <View style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 12 }}>
+        <View style={{ marginHorizontal: 10, marginTop: 10 }}>
+          <Text style={{ fontSize: 16, lineHeight: 24 }}>
+            {post?.description}
+          </Text>
+          {showfullText ? (
+            <Pressable onPress={toggleShowFullText}>
+              <Text style={{ color: "blue" }}>See Less</Text>
+            </Pressable>
+          ) : (
+            <Pressable onPress={toggleShowFullText}>
+              <Text style={{ color: "blue" }}>See More</Text>
+            </Pressable>
+          )}
+        </View>
+
+        {/* <View style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 12 }}>
           <Text
             style={{ fontSize: 15 }}
             numberOfLines={showfullText ? undefined : MAX_LINES}
@@ -148,7 +173,7 @@ const DetailPost = () => {
               <Text>See more</Text>
             </Pressable>
           )}
-        </View>
+        </View> */}
 
         {post?.imageUrl && (
           <Image
@@ -173,124 +198,94 @@ const DetailPost = () => {
 
         <View
           style={{
-            height: 2,
+            height: 0.5,
             borderColor: "#E0E0E0",
-            borderWidth: 2,
+            borderWidth: 0.5,
           }}
         />
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-around",
-            marginVertical: 10,
-          }}
-        >
-          <Pressable onPress={() => handleLikePost(post?._id)}>
+        <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
+          <Pressable 
+            onPress={() => handleLikePost(post?._id)}
+            style={{flexDirection: 'row', alignItems: 'center'}}
+          >
             <AntDesign
               style={{ textAlign: "center" }}
               name="like2"
               size={24}
               color={isLiked ? "#0072b1" : "gray"}
             />
-            <Text
-              style={{
-                textAlign: "center",
-                fontSize: 12,
-                color: isLiked ? "#0072b1" : "gray",
-                marginTop: 2,
-              }}
-            >
-              Like
-            </Text>
+            <Text style={{ marginLeft: 4, fontSize: 14, color: isLiked ? "#2078F4" : "gray" }}>Like</Text>
           </Pressable>
-          <Pressable onPress={() => handleComment(post?._id)}>
+          <Pressable style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => handleComment(post?._id)}>
             <FontAwesome
               name="comment-o"
               size={20}
-              color="gray"
+              color="blue"
               style={{ textAlign: "center" }}
             />
-            <Text
-              style={{
-                textAlign: "center",
-                marginTop: 2,
-                fontSize: 12,
-                color: "gray",
-              }}
-            >
-              Comment
-            </Text>
+            <Text style={{ marginLeft: 4, fontSize: 14, color: "blue" }}>Comment</Text>
           </Pressable>
-          <Pressable>
-            <Ionicons
-              name="md-share-outline"
-              size={20}
-              color="gray"
-              style={{ textAlign: "center" }}
-            />
-            <Text
-              style={{
-                marginTop: 2,
-                fontSize: 12,
-                textAlign: "center",
-                color: "gray",
-              }}
-            >
-              repost
-            </Text>
-          </Pressable>
-          <Pressable>
-            <Feather name="send" size={20} color="gray" />
-            <Text style={{ marginTop: 2, fontSize: 12, color: "gray" }}>
-              Send
-            </Text>
+          <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
+            <AntDesign name="sharealt" size={23} color="gray" />
+            <Text style={{ marginLeft: 4, fontSize: 14, color: "gray" }}>Share</Text>
           </Pressable>
         </View>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeComment}
-          value={comment}
-        />
-        <Button
-          onPress={handleComment}
-          title="Send"
-          color="#841584"
-        />
-          <FlatList
-            data={post?.comments}
-            renderItem={( {item} , index) => (
-              <View
-                key={item?._id}
-                style={{ backgroundColor: "#fff", borderColor: "1px yellow" }}
-              >
-                {console.log(item?.user)}
-                {/* {item?.user?.profileImage && ( */}
-                  <Image
-                    style={{ width: "100%", height: 100 }}
-                    source={{ uri: item?.user?.profileImage }}
-                  />
-                {/* )} */}
-                <Text style={{ color: "#333" }}>{item?.user?.name}</Text>
-                <Text style={{ color: "brown" }}>{item?.text}</Text>
-                <Text style={{ color: "red" }}>
-                  {moment(item?.createdAt).format("HH:mm DD/MM/YYYY")}
-                </Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems:'center',              
+              gap: 5,
+              backgroundColor: "white",
+              paddingVertical: 5,
+              borderRadius: 25,
+              marginTop: 10,
+              borderWidth: 1,
+              borderColor: '#D2D7D3',
+              marginHorizontal: 5,
+            }}
+          >
+            <TextInput
+              value={comment}
+              onChangeText={onChangeComment}
+              style={{
+                color: "gray",
+                marginLeft: 20,
+                marginVertical: 10,
+                width: 310,                
+              }}
+              placeholder="Comment"
+              
+            />
+            <Pressable
+              onPress={handleComment}
+                style={{   
+                  marginRight: 16     
+                }}
+            >
+              <FontAwesome name="send" size={30} color="blue" />
+            </Pressable>
+          </View>
+        </View>
+        <FlatList
+          data={post?.comments}
+          renderItem={({ item }) => (
+            <View style={{ flexDirection: "row", padding: 10, alignItems: "center", paddingTop:15 }}>
+              <Image
+                style={{ width: 40, height: 40, borderRadius: 20 }}
+                source={{ uri: item?.user?.profileImage }}
+              />
+              <View style={{ marginLeft: 10 }}>
+                <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
+                <Text>{item?.text}</Text>
               </View>
-            )}
-            keyExtractor={(item) => item._id}
-          />
-      </View>
+            </View>
+          )}
+          keyExtractor={item => item._id}
+        />
     </SafeAreaView>
   );
 };
-const styles = StyleSheet.create({
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
-});
 export default DetailPost;
