@@ -1,15 +1,4 @@
-import {Stack} from "expo-router";
-import {
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    SafeAreaView,
-    FlatList,
-    Pressable,
-    Image,
-    TextInput,
-  } from "react-native";
+import { Stack } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Layout(){
     const insets = useSafeAreaInsets();

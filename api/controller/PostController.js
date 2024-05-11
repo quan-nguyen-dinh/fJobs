@@ -62,7 +62,38 @@ class PostController {
       }
     }
 
-    // // [GET] /courses/:id/edit
+    // [POST] /posts/like/:postId
+    async like(req, res) {
+      // try {
+        const postId = req.params.postId;
+        const userId = req.params.userId;
+        console.log('postId: ', postId);
+        console.info('userId: ', userId);
+      //   const post = await Post.findById(postId);
+      //   if (!post) {
+      //     return res.status(400).json({ message: "Post not found" });
+      //   }
+    
+      //   //check if the user has already liked the post
+      //   const existingLike = post?.likes.find(
+      //     (like) => like.user.toString() === userId
+      //   );
+    
+      //   if (existingLike) {
+      //     post.likes = post.likes.filter((like) => like.user.toString() !== userId);
+      //   } else {
+      //     post.likes.push({ user: userId });
+      //   }
+    
+      //   await post.save();
+    
+      //   res.status(200).json({ message: "Post like/unlike successfull", post });
+      // } catch (error) {
+      //   console.log("error likeing a post", error);
+      //   res.status(500).json({ message: "Error liking the post" });
+      // }
+    }
+    // [GET] /courses/:id/edit
     // edit(req, res, next) {
     //     Course.findById(req.params.id)
     //         .then((course) =>

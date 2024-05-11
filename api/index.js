@@ -1,36 +1,43 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-// const mongoose = require("mongoose");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-require('dotenv').config();
-const app = express();
-const port = process.env.PORT;
 const cors = require("cors");
 const db = require('./config/db');
 const route = require("./routes");
+require('dotenv').config();
+const { Server } = require('socket.io');
+const app = express();
+const port = process.env.PORT;
 
 app.use(cors());
 db.connect();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 const jwt = require("jsonwebtoken");
-
-route(app);
-
-app.listen(port, () => {
-  console.log("Server is running on port "+port);
-});
-
-app.get('/', (req, res) => {
-  const host = req.hostname;
-  const ip = req.ip;
-  res.send(`Hostname: ${host}`);
-});
-
+const http = require("http").Server(app);
 const User = require("./models/user");
 const Post = require("./models/post");
+route(app);
+const io = new Server(http);
 
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('chat', (data)=>{
+    console.log('----------------------------');
+    console.log('data: ', data);
+  })
+  socket.on('push-comment', async (data) => {
+    console.log('data: ', data);
+    const loggedInuser = await User.findById(data.userId);
+    console.log('UsersInfo: ', loggedInuser);
+    socket.emit('comment', loggedInuser);
+  });
+});
+
+http.listen(port, () => {
+  console.log("Server is running on port "+port);
+});
 
 //endpoint to register a user in the backend
 // app.post("/register", async (req, res) => {
@@ -197,90 +204,90 @@ const Post = require("./models/post");
 //   }
 // });
 
-//send a connection request
-app.post("/connection-request", async (req, res) => {
-  try {
-    const { currentUserId, selectedUserId } = req.body;
+//todo: send a connection request
+// app.post("/connection-request", async (req, res) => {
+//   try {
+//     const { currentUserId, selectedUserId } = req.body;
 
-    await User.findByIdAndUpdate(selectedUserId, {
-      $push: { connectionRequests: currentUserId },
-    });
+//     await User.findByIdAndUpdate(selectedUserId, {
+//       $push: { connectionRequests: currentUserId },
+//     });
 
-    await User.findByIdAndUpdate(currentUserId, {
-      $push: { sentConnectionRequests: selectedUserId },
-    });
+//     await User.findByIdAndUpdate(currentUserId, {
+//       $push: { sentConnectionRequests: selectedUserId },
+//     });
 
-    res.sendStatus(200);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating connection request" });
-  }
-});
+//     res.sendStatus(200);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error creating connection request" });
+//   }
+// });
 
-//endpoint to show all the connections requests
-app.get("/connection-request/:userId", async (req, res) => {
-  try {
-    const { userId } = req.params;
+//todo: endpoint to show all the connections requests
+// app.get("/connection-request/:userId", async (req, res) => {
+//   try {
+//     const { userId } = req.params;
 
-    const user = await User.findById(userId)
-      .populate("connectionRequests", "name email profileImage")
-      .lean();
+//     const user = await User.findById(userId)
+//       .populate("connectionRequests", "name email profileImage")
+//       .lean();
 
-    const connectionRequests = user.connectionRequests;
+//     const connectionRequests = user.connectionRequests;
 
-    res.json(connectionRequests);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
+//     res.json(connectionRequests);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
 
-//endpoint to accept a connection request
-app.post("/connection-request/accept", async (req, res) => {
-  try {
-    const { senderId, recepientId } = req.body;
+//todo: endpoint to accept a connection request
+// app.post("/connection-request/accept", async (req, res) => {
+//   try {
+//     const { senderId, recepientId } = req.body;
 
-    const sender = await User.findById(senderId);
-    const recepient = await User.findById(recepientId);
+//     const sender = await User.findById(senderId);
+//     const recepient = await User.findById(recepientId);
 
-    sender.connections.push(recepientId);
-    recepient.connections.push(senderId);
+//     sender.connections.push(recepientId);
+//     recepient.connections.push(senderId);
 
-    recepient.connectionRequests = recepient.connectionRequests.filter(
-      (request) => request.toString() !== senderId.toString()
-    );
+//     recepient.connectionRequests = recepient.connectionRequests.filter(
+//       (request) => request.toString() !== senderId.toString()
+//     );
 
-    sender.sentConnectionRequests = sender.sentConnectionRequests.filter(
-      (request) => request.toString() !== recepientId.toString()
-    );
+//     sender.sentConnectionRequests = sender.sentConnectionRequests.filter(
+//       (request) => request.toString() !== recepientId.toString()
+//     );
 
-    await sender.save();
-    await recepient.save();
+//     await sender.save();
+//     await recepient.save();
 
-    res.status(200).json({ message: "Friend request acccepted" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-});
+//     res.status(200).json({ message: "Friend request acccepted" });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
 
 //endpoint to fetch all the connections of a user
-app.get("/connections/:userId", async (req, res) => {
-  try {
-    const userId = req.params.userId;
+// app.get("/connections/:userId", async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
 
-    const user = await User.findById(userId)
-      .populate("connections", "name profileImage createdAt")
-      .exec();
+//     const user = await User.findById(userId)
+//       .populate("connections", "name profileImage createdAt")
+//       .exec();
 
-    if (!user) {
-      return res.status(404).json({ message: "User is not found" });
-    }
-    res.status(200).json({ connections: user.connections });
-  } catch (error) {
-    console.log("error fetching the connections", error);
-    res.status(500).json({ message: "Error fetching the connections" });
-  }
-});
+//     if (!user) {
+//       return res.status(404).json({ message: "User is not found" });
+//     }
+//     res.status(200).json({ connections: user.connections });
+//   } catch (error) {
+//     console.log("error fetching the connections", error);
+//     res.status(500).json({ message: "Error fetching the connections" });
+//   }
+// });
 
 //endpoint to create a post
 app.post("/create", async (req, res) => {
@@ -308,35 +315,35 @@ app.post("/create", async (req, res) => {
 
 
 //endpoints to like a post
-app.post("/like/:postId/:userId", async (req, res) => {
-  try {
-    const postId = req.params.postId;
-    const userId = req.params.userId;
+// app.post("/like/:postId/:userId", async (req, res) => {
+//   try {
+//     const postId = req.params.postId;
+//     const userId = req.params.userId;
 
-    const post = await Post.findById(postId);
-    if (!post) {
-      return res.status(400).json({ message: "Post not found" });
-    }
+//     const post = await Post.findById(postId);
+//     if (!post) {
+//       return res.status(400).json({ message: "Post not found" });
+//     }
 
-    //check if the user has already liked the post
-    const existingLike = post?.likes.find(
-      (like) => like.user.toString() === userId
-    );
+//     //check if the user has already liked the post
+//     const existingLike = post?.likes.find(
+//       (like) => like.user.toString() === userId
+//     );
 
-    if (existingLike) {
-      post.likes = post.likes.filter((like) => like.user.toString() !== userId);
-    } else {
-      post.likes.push({ user: userId });
-    }
+//     if (existingLike) {
+//       post.likes = post.likes.filter((like) => like.user.toString() !== userId);
+//     } else {
+//       post.likes.push({ user: userId });
+//     }
 
-    await post.save();
+//     await post.save();
 
-    res.status(200).json({ message: "Post like/unlike successfull", post });
-  } catch (error) {
-    console.log("error likeing a post", error);
-    res.status(500).json({ message: "Error liking the post" });
-  }
-});
+//     res.status(200).json({ message: "Post like/unlike successfull", post });
+//   } catch (error) {
+//     console.log("error likeing a post", error);
+//     res.status(500).json({ message: "Error liking the post" });
+//   }
+// });
 
 //endpoint to update user description
 // app.put("/profile/:userId", async (req, res) => {

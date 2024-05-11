@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   FlatList,
 } from "react-native";
 import React, { useState, useEffect } from "react";
@@ -14,11 +13,17 @@ import { Octicons } from "@expo/vector-icons";
 import axios from "axios";
 import moment from "moment";
 import {REACT_APP_DEV_MODE} from '@env';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useRouter } from "expo-router";
 
 const connections = () => {
   const [connections, setConnections] = useState([]);
 
   const [userId, setUserId] = useState("");
+  const router = useRouter();
+  const handleMessage = () => {
+    // router.push("")
+  }
   useEffect(() => {
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -60,7 +65,7 @@ const connections = () => {
             marginTop: 10,
           }}
         >
-          <Text style={{ fontWeight: "500" }}>
+          <Text style={{ fontWeight: "500" }} onPress={() => router.back()}>
             {connections?.length} Connections
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
@@ -112,7 +117,7 @@ const connections = () => {
                 style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
               >
                 <Entypo name="dots-three-vertical" size={20} color="black" />
-                <Feather name="send" size={20} color="black" />
+                <Feather name="send" size={20} color="black" onPress={handleMessage}/>
               </View>
             </View>
           )}

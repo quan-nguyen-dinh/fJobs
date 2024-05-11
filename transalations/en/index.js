@@ -9,4 +9,6 @@ export default en = {
   tabFirst: "Home",
   tabSecond: "Network",
   tabThird: "Post",
+  tabFourth: "Notification",
+  tabFifth: "Chat"
 };

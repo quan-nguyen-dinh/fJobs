@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   Pressable,
   FlatList,
 } from "react-native";
@@ -16,13 +15,15 @@ import UserProfile from "../../../components/UserProfile";
 import ConnectionRequest from "../../../components/ConnectionRequest";
 import { useRouter } from "expo-router";
 import {REACT_APP_DEV_MODE} from '@env';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const index = () => {
   const [userId, setUserId] = useState("");
   const [user, setUser] = useState();
   const [users, setUsers] = useState([]);
-  const router = useRouter();
   const [connectionRequests, setConnectionRequests] = useState([]);
+  const router = useRouter();
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -33,11 +34,13 @@ const index = () => {
 
     fetchUser();
   }, []);
+
   useEffect(() => {
     if (userId) {
       fetchUserProfile();
     }
   }, [userId]);
+
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
@@ -49,11 +52,13 @@ const index = () => {
       console.log("error fetching user profile", error);
     }
   };
+
   useEffect(() => {
     if (userId) {
       fetchUsers();
     }
   }, [userId]);
+
   const fetchUsers = async () => {
     axios
       .get(`${REACT_APP_DEV_MODE}/users/${userId}`)
@@ -82,14 +87,13 @@ const index = () => {
           email: friendRequest.email,
           image: friendRequest.profileImage,
         }));
-
+        console.log('connection: ', connectionRequestsData);
         setConnectionRequests(connectionRequestsData);
       }
     } catch (error) {
       console.log("error", error);
     }
   };
-  console.log(connectionRequests);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <Pressable
@@ -128,7 +132,7 @@ const index = () => {
       <View
         style={{ borderColor: "#E0E0E0", borderWidth: 2, marginVertical: 10 }}
       />
-      <FlatList
+      {connectionRequests.length > 0 && <FlatList
         data={connectionRequests}
         keyExtractor={(item) => item._id}
         renderItem={({ item, key }) => (
@@ -141,6 +145,7 @@ const index = () => {
           />
         )}
       />
+} 
 
       <View style={{ marginHorizontal: 15 }}>
         <View

@@ -23,6 +23,7 @@ import transalations from "../../../transalations";
 import { useDispatch, useSelector } from "react-redux";
 import { increment } from "../../../store/couterSlice";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { socket } from "../../../App";
 
 
 const i18n = new I18n(transalations);
@@ -38,6 +39,8 @@ const index = () => {
   console.log('a: ', a);
   console.log('i18n local: ', i18n.locale);
   useEffect(() => {
+    console.log('SOCKET: ', socket);
+    socket.emit('HOME', 'WE"RE AT HOME');
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
       const decodedToken = jwt_decode(token);
@@ -91,6 +94,7 @@ const index = () => {
       );
       if (response.status === 200) {
         const updatedPost = response.data.post;
+        console.log('updatePost: ', updatedPost);
         setIsLiked(updatedPost.likes.some((like) => like.user === userId));
       }
     } catch (error) {
@@ -168,7 +172,7 @@ const index = () => {
 
       <FlatList
         data={posts}
-        renderItem={({ item }, index) => (
+        renderItem={({ item }) => (
           <View key={item._id} style={{backgroundColor:'white'}}>
             <View
               style={{
@@ -278,14 +282,14 @@ const index = () => {
                   style={{ textAlign: "center" }}
                   name="like2"
                   size={24}
-                  color={isLiked ? "#0072b1" : "gray"}
+                  color={item?.likes?.length > 0 ? "#0072b1" : "gray"}
                 />
                 <Text> </Text>
                 <Text
                   style={{
                     textAlign: "center",
                     fontSize: 12,
-                    color: isLiked ? "#0072b1" : "gray",
+                    color: item?.likes?.length > 0 ? "#0072b1" : "gray",
                     marginTop: 2,
                   }}
                 >

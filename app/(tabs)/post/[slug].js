@@ -20,6 +20,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
+import { socket } from "../../../App";
 
 const DetailPost = () => {
   console.log("-------------RE-RENDER-------------");
@@ -75,11 +76,12 @@ const DetailPost = () => {
         userId: userId,
       }
       console.log(newComment, 'date: ', Date.now);
-      const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
-          ...newComment
-        }
-      );
+      // const response = await axios.post(
+      //   `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
+      //     ...newComment
+      //   }
+      // );
+      socket.emit('push-comment', newComment);
       if (response.status === 200) {
         console.log('sucessful')
         fetchPost();
