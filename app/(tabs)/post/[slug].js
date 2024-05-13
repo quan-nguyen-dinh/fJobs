@@ -77,11 +77,16 @@ const DetailPost = () => {
       }
       console.log(newComment, 'date: ', Date.now);
       // const response = await axios.post(
-      //   `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
+      //   `192.168.1.15:3001/posts/comment/${slug}`,{
       //     ...newComment
       //   }
       // );
       socket.emit('push-comment', newComment);
+      const response = await axios.post(
+        `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
+          ...newComment
+        }
+      );
       if (response.status === 200) {
         console.log('sucessful')
         fetchPost();
@@ -104,7 +109,7 @@ const DetailPost = () => {
             justifyContent: "space-between",
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginTop: 20, marginLeft:10 }}>
             <Image
               style={{ width: 60, height: 60, borderRadius: 30 }}
               source={{ uri: post?.user?.profileImage || null }}
@@ -133,19 +138,21 @@ const DetailPost = () => {
           </View>
           
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-            <Image
-              style={{ width: 50, height: 50, borderRadius: 25 }}
-              source={{ uri: post?.user?.profileImage || undefined }}
-            />
             <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>{post?.user?.name}</Text>
               <Text style={{ color: "gray", fontSize: 14 }}>
                 {moment(post?.createdAt).format("MMMM Do, YYYY")}
               </Text>
             </View>
-            <Entypo name="dots-three-vertical" size={20} color="black" />
+            <Pressable
+              style={{
+                marginRight: 10
+              }}
+            >
+              <Entypo name="dots-three-vertical" size={20} color="black" />
+            </Pressable>
+            
           </View>
-          
         </View>
 
         <View style={{ marginHorizontal: 10, marginTop: 10 }}>
@@ -223,10 +230,9 @@ const DetailPost = () => {
             <FontAwesome
               name="comment-o"
               size={20}
-              color="blue"
-              style={{ textAlign: "center" }}
+              style={{ textAlign: "center", color: "gray" }}
             />
-            <Text style={{ marginLeft: 4, fontSize: 14, color: "blue" }}>Comment</Text>
+            <Text style={{ marginLeft: 4, fontSize: 14, color:'gray' }}>Comment</Text>
           </Pressable>
           <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
             <AntDesign name="sharealt" size={23} color="gray" />
@@ -264,22 +270,35 @@ const DetailPost = () => {
             <Pressable
               onPress={handleComment}
                 style={{   
-                  marginRight: 16     
+                  marginRight: 20   
                 }}
             >
-              <FontAwesome name="send" size={30} color="blue" />
+              <FontAwesome name="send" size={20} color="blue" />
             </Pressable>
           </View>
         </View>
         <FlatList
           data={post?.comments}
           renderItem={({ item }) => (
-            <View style={{ flexDirection: "row", padding: 10, alignItems: "center", paddingTop:15 }}>
+            <View 
+              style={{ 
+                flexDirection: "row", 
+                padding: 10, 
+                alignItems: "center", 
+            }}>
               <Image
                 style={{ width: 40, height: 40, borderRadius: 20 }}
                 source={{ uri: item?.user?.profileImage }}
               />
-              <View style={{ marginLeft: 10 }}>
+              <View 
+                style={{ 
+                  marginLeft: 10,
+                  padding: 10,
+                  backgroundColor: '#E0E0E0',
+                  borderRadius: 10,
+                  marginBottom: 5,
+                  
+              }}>
                 <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
                 <Text>{item?.text}</Text>
               </View>
