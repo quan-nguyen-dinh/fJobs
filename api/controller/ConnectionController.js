@@ -73,7 +73,7 @@ class ConnectionController {
             const user = await User.findById(userId)
               .populate("connections", "name profileImage createdAt")
               .exec();
-        
+            console.log('user: ', user);
             if (!user) {
               return res.status(404).json({ message: "User is not found" });
             }

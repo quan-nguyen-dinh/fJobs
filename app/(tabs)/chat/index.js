@@ -1,10 +1,34 @@
 import { router } from 'expo-router';
 import { AntDesign } from "@expo/vector-icons";
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, TextInput, FlatList, Text, StyleSheet, Image, Pressable } from 'react-native';
+import axios from 'axios';
+import {REACT_APP_DEV_MODE} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwt_decode from "jwt-decode";
+import MessageItem from '../../../components/MessageItem';
 
 function index() {
-  const [user, setUser] = useState();
+  const [friends, setFriends] = useState([]);
+  console.log('chat')
+  const getFriends = async () => {
+    const token = await AsyncStorage.getItem("authToken");
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.userId;
+    console.log('userId: ', userId);
+    try {
+      const res = await axios.get(`${REACT_APP_DEV_MODE}/connection/all/${userId}`);
+      console.log('data: ', res.data);
+      setFriends(res.data?.connections);
+    }catch(err) {
+      console.log('ERROR FETCH : ', err);
+    }
+  };
+
+  useEffect(()=>{
+    getFriends();
+  }, []);
+  
   const handleMessage = async (messageId) => {
     console.log('messageId ', messageId);
     router.push(`/message/${messageId}`);
@@ -32,19 +56,20 @@ function index() {
           <TextInput placeholder="Search" />
         </Pressable>
       <FlatList
-        data={Array(10).fill(null)}
-        renderItem={() => (
-          <View >
-            <Pressable style={styles.conversationContainer} onPress={() => handleMessage()}>
-              <Image source={{uri: user?.profileImage || null}} style={styles.avatar} />
-              <View style={styles.conversationInfo}>
-                <Text style={styles.conversationName}>User Name</Text>
-                <Text style={styles.conversationMessage}>This is a message</Text>
-              </View>
-            </Pressable>
-          </View>
+        data={friends}
+        renderItem={({item}) => (
+          <MessageItem item={item}/>
+          // <View >
+          //   <Pressable style={styles.conversationContainer} onPress={() => handleMessage()}>
+          //     <Image source={{uri: item?.profileImage || null}} style={styles.avatar} />
+          //     <View style={styles.conversationInfo}>
+          //       <Text style={styles.conversationName}>{item.name}</Text>
+          //       <Text style={styles.conversationMessage}>This is a message</Text>
+          //     </View>
+          //   </Pressable>
+          // </View>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => item._id}
       />
     </View>
   );

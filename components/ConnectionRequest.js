@@ -40,7 +40,7 @@ const ConnectionRequest = ({
       <View style={{ flexDirection: "row", alignItems: "center", gap: 7 }}>
         <Image
           style={{ width: 50, height: 50, borderRadius: 25 }}
-          source={{ uri: item?.image }}
+          source={{ uri: item?.profileImage || null }}
         />
 
         <Text style={{ width: 200 }}>

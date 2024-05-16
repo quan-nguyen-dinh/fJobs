@@ -2,7 +2,7 @@ const postsRouter = require('./posts');
 const profileRouter = require('./profile');
 const usersRouter = require('./users');
 const siteRouter = require('./site');
-// const messageRouter = require('./message');
+const messageRouter = require('./message');
 const connectionRouter = require('./connection');
 
 function route(app) {
@@ -10,7 +10,7 @@ function route(app) {
     app.use('/users', usersRouter);
     app.use('/posts', postsRouter);
     app.use('/profile', profileRouter);
-    // app.use('/message', messageRouter);
+    app.use('/messages', messageRouter);
     app.use('/connection', connectionRouter);
 }
 

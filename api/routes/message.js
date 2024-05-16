@@ -4,7 +4,7 @@ const router = express.Router();
 const MessageController = require('../controller/MessageController');
 
 router.get('/all', MessageController.show);
-// router.get('/:postId', PostController.detail);
+router.get('/:senderId/:recepientId', MessageController.getMessageByRecepient);
 // router.get('/comments/:postId', PostController.comments);
-// router.post('/comment/:slug', PostController.updateComment)
+router.post('/chat', MessageController.chat)
 module.exports = router;

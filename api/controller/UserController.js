@@ -31,6 +31,19 @@ class UserController {
       res.status(500).json({ message: "Error retrieving users" });
     }
   }
+  async getInfo(req, res) {
+    try {
+      const { userId } = req.params;
+  
+      //fetch the user data from the user ID
+      const recepientId = await User.findById(userId);
+  
+      res.status(200).json(recepientId);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
 }
 
 module.exports = new UserController();
