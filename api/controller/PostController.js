@@ -64,34 +64,34 @@ class PostController {
 
     // [POST] /posts/like/:postId
     async like(req, res) {
-      // try {
+      try {
         const postId = req.params.postId;
         const userId = req.params.userId;
-        console.log('postId: ', postId);
-        console.info('userId: ', userId);
-      //   const post = await Post.findById(postId);
-      //   if (!post) {
-      //     return res.status(400).json({ message: "Post not found" });
-      //   }
+        const updatedPost = await Post.findById(postId);
+        if (!updatedPost) {
+          return res.status(400).json({ message: "Post not found" });
+        }
     
-      //   //check if the user has already liked the post
-      //   const existingLike = post?.likes.find(
-      //     (like) => like.user.toString() === userId
-      //   );
+        //check if the user has already liked the post
+        const existingLike = updatedPost?.likes.find(
+          (like) => like.user.toString() === userId
+        );
     
-      //   if (existingLike) {
-      //     post.likes = post.likes.filter((like) => like.user.toString() !== userId);
-      //   } else {
-      //     post.likes.push({ user: userId });
-      //   }
+        if (existingLike) {
+          // console.log('')
+          updatedPost.likes = updatedPost.likes.filter((like) => like.user.toString() !== userId);
+        } else {
+          updatedPost.likes.push({ user: userId });
+        }
+        const post = updatedPost;
+        console.log('post: ', updatedPost);
+        await updatedPost.save();
     
-      //   await post.save();
-    
-      //   res.status(200).json({ message: "Post like/unlike successfull", post });
-      // } catch (error) {
-      //   console.log("error likeing a post", error);
-      //   res.status(500).json({ message: "Error liking the post" });
-      // }
+        res.status(200).json({ message: "Post like/unlike successfull", post });
+      } catch (error) {
+        console.log("error likeing a post", error);
+        res.status(500).json({ message: "Error liking the post" });
+      }
     }
     // [GET] /courses/:id/edit
     // edit(req, res, next) {

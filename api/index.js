@@ -18,6 +18,8 @@ const jwt = require("jsonwebtoken");
 const http = require("http").Server(app);
 const User = require("./models/user");
 const Post = require("./models/post");
+const MessageController = require("./controller/MessageController");
+const Message = require("./models/message");
 route(app);
 const io = new Server(http);
 
@@ -33,6 +35,33 @@ io.on('connection', (socket) => {
     console.log('UsersInfo: ', loggedInuser);
     socket.emit('comment', loggedInuser);
   });
+  socket.on('send-message', async (data)=>{
+    try{
+      // console.log('req, ', req.body);
+      const { senderId, recepientId, messageType, messageText } = data;
+      const newMessage = new Message({
+        senderId,
+        recepientId,
+        messageType,
+        message: messageText,
+        timestamp: new Date(),
+        imageUrl: messageType === "image" ? req.file.path : null,
+      });
+      
+      await newMessage.save();
+      socket.broadcast.emit('receipt-message', data);
+      // res.status(200).json({ message: "Message sent Successfully" });
+    }catch(error) {
+      console.error(error);
+      // res.status(500).json({error: 'Post msg failed!'});
+    }
+   
+  })
+
+  //join room
+  socket.on('join-room', key=>{
+    socket.join(key);
+  })
 });
 
 http.listen(port, () => {
@@ -313,37 +342,6 @@ app.post("/create", async (req, res) => {
 
 //endpoint to fetch all the posts
 
-
-//endpoints to like a post
-// app.post("/like/:postId/:userId", async (req, res) => {
-//   try {
-//     const postId = req.params.postId;
-//     const userId = req.params.userId;
-
-//     const post = await Post.findById(postId);
-//     if (!post) {
-//       return res.status(400).json({ message: "Post not found" });
-//     }
-
-//     //check if the user has already liked the post
-//     const existingLike = post?.likes.find(
-//       (like) => like.user.toString() === userId
-//     );
-
-//     if (existingLike) {
-//       post.likes = post.likes.filter((like) => like.user.toString() !== userId);
-//     } else {
-//       post.likes.push({ user: userId });
-//     }
-
-//     await post.save();
-
-//     res.status(200).json({ message: "Post like/unlike successfull", post });
-//   } catch (error) {
-//     console.log("error likeing a post", error);
-//     res.status(500).json({ message: "Error liking the post" });
-//   }
-// });
 
 //endpoint to update user description
 // app.put("/profile/:userId", async (req, res) => {

@@ -7,23 +7,25 @@ import {
   Pressable,
   Image,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect, useTransition } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
-import { Ionicons, Entypo,EvilIcons, Feather, FontAwesome, Octicons } from "@expo/vector-icons";
+import { Ionicons, Entypo, EvilIcons, Feather, FontAwesome, Octicons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
 import { useRouter } from "expo-router";
-import {REACT_APP_DEV_MODE} from '@env';
+import { REACT_APP_DEV_MODE } from '@env';
 import { I18n } from 'i18n-js';
 import transalations from "../../../transalations";
 import { useDispatch, useSelector } from "react-redux";
 import { increment } from "../../../store/couterSlice";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { socket } from "../../../App";
+import { SearchBar } from "react-native-screens";
 
 
 const i18n = new I18n(transalations);
@@ -36,10 +38,7 @@ const index = () => {
   const [user, setUser] = useState();
   const [posts, setPosts] = useState([]);
   const a = useTransition();
-  console.log('a: ', a);
-  console.log('i18n local: ', i18n.locale);
   useEffect(() => {
-    console.log('SOCKET: ', socket);
     socket.emit('HOME', 'WE"RE AT HOME');
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -69,10 +68,7 @@ const index = () => {
   useEffect(() => {
     const fetchAllPosts = async () => {
       try {
-        const url = `${REACT_APP_DEV_MODE}/posts/all`;
-        console.log('rl: ', url);
         const response = await axios.get(`${REACT_APP_DEV_MODE}/posts/all`);
-        console.log("posts: ", response.data.posts);
         setPosts(response.data.posts);
       } catch (error) {
         console.log("error fetching posts", error);
@@ -89,13 +85,33 @@ const index = () => {
   const [isLiked, setIsLiked] = useState(false);
   const handleLikePost = async (postId) => {
     try {
+      console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`)
       const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/like/${postId}/${userId}`
+        `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`
       );
       if (response.status === 200) {
         const updatedPost = response.data.post;
-        console.log('updatePost: ', updatedPost);
-        setIsLiked(updatedPost.likes.some((like) => like.user === userId));
+        console.log(updatedPost, ' updatePost: ');
+        if (updatedPost) {
+          console.log(updatedPost.id, 'LIKE: ', updatedPost.likes?.length);
+        }
+        console.log('posts', posts);
+        setPosts(prevPosts => {
+          const newPosts = [...prevPosts];
+          newPosts.forEach(post => {
+            if (post._id === updatedPost._id) {
+              console.log('LIKE: ', post.likes?.length, 'UPDATE POST: ', updatedPost.likes?.length);
+              post.likes = updatedPost.likes;
+              //post = updatePost not update likes properties of the post
+              console.log(post._id, ' LIKE: ', post.likes?.length,);
+            }
+          });
+          newPosts.forEach(post => {
+            console.log('POST: ', post._id, post.likes?.length);
+          })
+          return newPosts;
+        })
+        // setIsLiked(updatedPost.likes.some((like) => like.user === userId));
       }
     } catch (error) {
       console.log("Error liking/unliking the post", error);
@@ -109,7 +125,7 @@ const index = () => {
   const count = useSelector((state) => state.counter.value)
   const dispatch = useDispatch();
   return (
-    <SafeAreaView style ={{backgroundColor: 'white'}}>
+    <SafeAreaView style={{ backgroundColor: 'white' }}>
       <View
         style={{
           padding: 10,
@@ -117,30 +133,31 @@ const index = () => {
           alignItems: "center",
           gap: 4,
           borderBottomWidth: 0.5,
-          borderBottomColor:'gray'
+          borderBottomColor: 'gray'
         }}
       >
-        <View 
+        <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-            
+
           }}
         >
-          
+
           <Pressable onPress={() => router.push("/home/profile")}>
             <Image
               style={{ width: 35, height: 35, borderRadius: 15 }}
               source={{ uri: user?.profileImage || null }}
             />
           </Pressable>
-          <Text 
+          <Text
             style={{
-              paddingLeft: 5, 
-              fontSize: 18, 
-              fontWeight: 800, 
-              color: '#1877F2'}}
+              paddingLeft: 5,
+              fontSize: 18,
+              fontWeight: 800,
+              color: '#1877F2'
+            }}
           >QQ Talk</Text>
         </View>
 
@@ -155,7 +172,7 @@ const index = () => {
             height: 30,
             flex: 1,
             borderWidth: 1,
-            borderColor:'gray'
+            borderColor: 'gray'
           }}
         >
           <AntDesign
@@ -173,7 +190,7 @@ const index = () => {
       <FlatList
         data={posts}
         renderItem={({ item }) => (
-          <View key={item._id} style={{backgroundColor:'white'}}>
+          <View key={item._id} style={{ backgroundColor: 'white' }}>
             <View
               style={{
                 flexDirection: "row",
@@ -182,7 +199,7 @@ const index = () => {
               }}
             >
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingTop:3 }}
+                style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingTop: 3 }}
               >
                 <Image
                   style={{ width: 50, height: 50, borderRadius: 30 }}
@@ -193,7 +210,7 @@ const index = () => {
                   <Text style={{ fontSize: 15, fontWeight: "600" }}>
                     {item?.user?.name}
                   </Text>
-                  <View style={{flexDirection:'row', alignItems:'center'}}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text
                       numberOfLines={1}
                       ellipsizeMode="tail"
@@ -206,7 +223,7 @@ const index = () => {
                       Dev
                     </Text>
                     <Entypo name="dot-single" size={12} color="gray" />
-                    <Text style={{ color: "gray",fontSize: 14 }}>
+                    <Text style={{ color: "gray", fontSize: 14 }}>
                       {moment(item.createdAt).format("MMMM Do YYYY")}
                     </Text>
                   </View>
@@ -222,7 +239,7 @@ const index = () => {
             </View>
 
             <View
-              style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 12}}
+              style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 12 }}
             >
               <Text
                 style={{ fontSize: 15 }}
@@ -232,7 +249,7 @@ const index = () => {
               </Text>
               {!showfullText && (
                 <Pressable onPress={toggleShowFullText}>
-                  <Text style={{color:'#1877F2'}}>See more</Text>
+                  <Text style={{ color: '#1877F2' }}>See more</Text>
                 </Pressable>
               )}
             </View>
@@ -273,11 +290,11 @@ const index = () => {
                 justifyContent: "space-around",
                 marginVertical: 10,
                 paddingTop: 10,
-                borderTopWidth:0.2,
+                borderTopWidth: 0.2,
                 borderTopColor: 'gray'
               }}
             >
-              <Pressable style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}} onPress={() => handleLikePost(item?._id)}>
+              <Pressable style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => handleLikePost(item?._id)}>
                 <AntDesign
                   style={{ textAlign: "center" }}
                   name="like2"
@@ -296,7 +313,7 @@ const index = () => {
                   Like
                 </Text>
               </Pressable>
-              <Pressable style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => handleComment(item?._id)}>
+              <Pressable style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => handleComment(item?._id)}>
                 <FontAwesome
                   name="comment-o"
                   size={20}
@@ -315,8 +332,8 @@ const index = () => {
                   Comment
                 </Text>
               </Pressable>
-              <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
-                <AntDesign name="link" size={22} color="gray" />                  
+              <Pressable style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <AntDesign name="link" size={22} color="gray" />
                 <Text> </Text>
                 <Text
                   style={{
@@ -329,7 +346,7 @@ const index = () => {
                   Copy
                 </Text>
               </Pressable>
-              <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Pressable style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <AntDesign name="sharealt" size={23} color="gray" />
                 <Text> </Text>
                 <Text style={{ marginTop: 2, fontSize: 12, color: "gray" }}>
@@ -337,16 +354,27 @@ const index = () => {
                 </Text>
               </Pressable>
             </View>
-            <View
-              style={{
-                height: 2,
-                borderColor: "#D2D7D3",
-                borderWidth: 2,
-              }}
-            />
+      
           </View>
         )}
+        ItemSeparatorComponent={() => <View
+          style={{
+            height: 2,
+            borderColor: "#D2D7D3",
+            borderWidth: 2,
+          }}
+        />}
         keyExtractor={(item) => item._id}
+        ListHeaderComponent={() => <SearchBar placeholder="Type Here..." lightTheme round />}
+        ListFooterComponent={() => <View
+          style={{
+            paddingVertical: 20,
+            borderTopWidth: 1,
+            borderColor: "#CED0CE"
+          }}
+        >
+          <ActivityIndicator animating size="large" />
+        </View>}
       />
     </SafeAreaView>
   );

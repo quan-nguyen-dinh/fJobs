@@ -8,6 +8,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
+import {socket}  from '../../../App.js';
 import React, {
   useState,
   useContext,
@@ -81,6 +82,7 @@ const ChatDetail = () => {
   useEffect(() => {
     fetchMessages();
   }, []);
+
   const [userId, setUserId] = useState(async () => {
     const token = await AsyncStorage.getItem("authToken");
     const decodedToken = jwt_decode(token);
@@ -88,6 +90,16 @@ const ChatDetail = () => {
     console.log('userId in local---------: ', userId);
     return  userId;
   });
+
+  //join room
+  useEffect(()=>{
+    const key = {
+      userId,
+      recepientId
+    }
+    socket.emit('join-room', key);
+  }, []);
+
   useEffect(() => {
     const fetchRecepientData = async () => {
       try {
@@ -137,26 +149,35 @@ const ChatDetail = () => {
         messageType: "text",
         messageText: message,
       };
+      
+      //? not working, but it work in another project
       // const response = await fetch(`${REACT_APP_DEV_MODE}/messages/chat`, {
       //   method: "POST",
       //   body: formData,
       // });
-      const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/messages/chat`,
-        newMessage
-      );
-      console.log("res: ", response.status);
-      if (response.status == 200) {
+      socket.emit('send-message', newMessage);
+      // const response = await axios.post(
+      //   `${REACT_APP_DEV_MODE}/messages/chat`,
+      //   newMessage
+      // );
+      // console.log("res: ", response.status);
+      // if (response.status == 200) {
         setMessage("");
         setSelectedImage("");
 
         fetchMessages();
-      }
+      // }
     } catch (error) {
       console.log("error in sending the message", error);
     }
   };
 
+  useEffect(() => {
+    socket.on('receipt-message', data => {
+      console.log('RECIPET DATA: ', data);
+      // fetchMessages();
+    })
+  }, [socket])
   console.log("messages", selectedMessages);
   useLayoutEffect(() => {
     navigation.setOptions({

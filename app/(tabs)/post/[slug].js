@@ -81,7 +81,8 @@ const DetailPost = () => {
       //     ...newComment
       //   }
       // );
-      socket.emit('push-comment', newComment);
+      // socket.emit('push-comment', newComment);
+      socket.emit('send-message', newComment);
       const response = await axios.post(
         `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
           ...newComment

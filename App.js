@@ -4,7 +4,7 @@ import {REACT_APP_DEV_MODE} from '@env';
 import { io } from "socket.io-client";
 import { useEffect } from 'react';
 
-export const socket = io("http://10.10.20.47:3001");
+export const socket = io(`${REACT_APP_DEV_MODE}`);
 
 export default function App() {
   console.log('API: ', REACT_APP_DEV_MODE);

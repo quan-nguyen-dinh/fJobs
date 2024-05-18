@@ -36,6 +36,7 @@ const UserProfile = ({ item, userId }) => {
         marginHorizontal: 16,
         borderColor: "#E0E0E0",
         borderWidth: 1,
+        paddingVertical: 10,
         marginVertical: 10,
         justifyContent: "center",
         height: Dimensions.get("window").height / 4,
@@ -58,9 +59,9 @@ const UserProfile = ({ item, userId }) => {
         <Text style={{ textAlign: "center", fontSize: 16, fontWeight: "600" }}>
           {item?.name}
         </Text>
-        <Text style={{ textAlign: "center", marginLeft: 1, marginTop: 2 }}>
+        {/* <Text style={{ textAlign: "center", marginLeft: 1, marginTop: 2 }}>
           Engineer Graduate | Linkedin member
-        </Text>
+        </Text> */}
       </View>
 
       <Pressable

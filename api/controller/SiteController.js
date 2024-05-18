@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const { generateSecretKey } = require("../helper");
 const crypto = require("crypto");
 
-
 class SiteController {
   async sendVerificationEmail(email, verificationToken) {
     const transporter = nodemailer.createTransport({
@@ -99,7 +98,6 @@ class SiteController {
 
       //check if user exists already
       const user = await User.findOne({ email });
-      console.log("checklogin: ", user);
       if (!user) {
         return res.status(401).json({ message: "Invalid email or password" });
       }
