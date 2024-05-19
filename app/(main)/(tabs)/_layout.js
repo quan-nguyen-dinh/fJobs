@@ -3,9 +3,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { I18n } from "i18n-js";
-import transalations from "../../transalations";
+import transalations from "../../../transalations";
 import { Provider, useSelector } from "react-redux";
-import { store } from "../../store";
+import { store } from "../../../store";
 
 export default function Layout() {
   const i18n = useSelector((state) => state.transalation.i18n);

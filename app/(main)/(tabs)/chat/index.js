@@ -6,7 +6,7 @@ import axios from 'axios';
 import {REACT_APP_DEV_MODE} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
-import MessageItem from '../../../components/MessageItem';
+import MessageItem from '../../../../components/MessageItem';
 
 function index() {
   const [friends, setFriends] = useState([]);

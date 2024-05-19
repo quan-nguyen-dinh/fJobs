@@ -8,7 +8,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import {socket}  from '../../../App.js';
+import {socket}  from '../../../../App.js';
 import React, {
   useState,
   useContext,

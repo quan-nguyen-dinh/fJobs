@@ -13,7 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import { firebase } from "../../../firebase";
+import { firebase } from "../../../../firebase";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import {REACT_APP_DEV_MODE} from '@env';

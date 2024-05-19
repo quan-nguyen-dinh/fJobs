@@ -20,12 +20,11 @@ import moment from "moment";
 import { useRouter } from "expo-router";
 import { REACT_APP_DEV_MODE } from '@env';
 import { I18n } from 'i18n-js';
-import transalations from "../../../transalations";
 import { useDispatch, useSelector } from "react-redux";
-import { increment } from "../../../store/couterSlice";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { socket } from "../../../App";
+import { socket } from "../../../../App";
 import { SearchBar } from "react-native-screens";
+import transalations from "../../../../transalations";
 
 
 const i18n = new I18n(transalations);

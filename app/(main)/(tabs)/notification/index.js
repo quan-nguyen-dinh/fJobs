@@ -2,7 +2,7 @@ import React from 'react';
 import { View, FlatList, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
-import { socket } from '../../../App';
+// import { socket } from '../../../App';
 
 const index = () => {
     // const [isNotify, setIsNotify] = useState(false);

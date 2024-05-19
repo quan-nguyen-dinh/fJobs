@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import {
   StyleSheet,
   Text,
@@ -13,33 +13,39 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { REACT_APP_DEV_MODE } from "@env";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import moment from "moment";
 import { Ionicons, Entypo, Feather, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
-import { socket } from "../../../App";
+import { socket } from "../../../../App";
+
+const MAX_LINES = 2;
 
 const DetailPost = () => {
   console.log("-------------RE-RENDER-------------");
   const { slug } = useLocalSearchParams();
   const [post, setPost] = useState();
   const [userId, setUserId] = useState("");
-  const fetchPost = async () => {
-    try {
-      const response = await axios.get(`${REACT_APP_DEV_MODE}/posts/${slug}`);
-      console.log('reqq')
-      setPost(response.data);
-    } catch (error) {
-      console.log("error fetching user profile", error);
-    }
-  };
+  const [comment, onChangeComment] = React.useState("");
+  const [showfullText, setShowfullText] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const navigation = useNavigation();
+
   useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await axios.get(`${REACT_APP_DEV_MODE}/posts/${slug}`);
+        setPost(response.data);
+      } catch (error) {
+        console.log("error fetching user profile", error);
+      }
+    };
     fetchPost();
   }, [slug]);
-  const [comment, onChangeComment] = React.useState("");
+ 
   useEffect(() => {
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -50,12 +56,11 @@ const DetailPost = () => {
 
     fetchUser();
   }, []);
-  const MAX_LINES = 2;
-  const [showfullText, setShowfullText] = useState(false);
+
   const toggleShowFullText = () => {
     setShowfullText(!showfullText);
   };
-  const [isLiked, setIsLiked] = useState(false);
+
   const handleLikePost = async (postId) => {
     try {
       const response = await axios.post(
@@ -69,6 +74,7 @@ const DetailPost = () => {
       console.log("Error liking/unliking the post", error);
     }
   };
+
   const handleComment = async () => {
     try {
       const newComment = {
@@ -101,6 +107,24 @@ const DetailPost = () => {
       console.log("Error comment the post", error);
     }
   };
+
+  useLayoutEffect(()=>{
+    navigation.setOptions({
+      headerTitle: "",
+      headerLeft: () => (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <Ionicons
+            onPress={() => navigation.goBack()}
+            name="arrow-back"
+            size={24}
+            color="black"
+          />
+          <Text style={{ fontSize: 20, fontWeight: "500" }}>Bài viết của {post?.user?.name}</Text>
+        </View>
+      )
+    })
+  }, [])
+
   return (
     <SafeAreaView>
       <View key={post?._id}>
@@ -110,7 +134,7 @@ const DetailPost = () => {
             justifyContent: "space-between",
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginTop: 20, marginLeft:10 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginLeft:10 }}>
             <Image
               style={{ width: 60, height: 60, borderRadius: 30 }}
               source={{ uri: post?.user?.profileImage || null }}

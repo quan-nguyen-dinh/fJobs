@@ -96,7 +96,7 @@ const connections = () => {
             >
               <Image
                 style={{ width: 48, height: 48, borderRadius: 24 }}
-                source={{ uri: item?.profileImage }}
+                source={{ uri: item?.profileImage || null}}
               />
 
               <View style={{ flexDirection: "column", gap: 2, flex: 1 }}>

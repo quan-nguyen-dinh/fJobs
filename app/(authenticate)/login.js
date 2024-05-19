@@ -57,7 +57,7 @@ const login = () => {
           console.log(response);
           const token = response.data.token;
           AsyncStorage.setItem("authToken",token);
-          router.replace("/(tabs)/home");
+          router.replace("/(main)/(tabs)/home");
       }).catch(error=>{
           console.log('login error: ', error);
       })
