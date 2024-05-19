@@ -59,15 +59,6 @@ function index() {
         data={friends}
         renderItem={({item}) => (
           <MessageItem item={item}/>
-          // <View >
-          //   <Pressable style={styles.conversationContainer} onPress={() => handleMessage()}>
-          //     <Image source={{uri: item?.profileImage || null}} style={styles.avatar} />
-          //     <View style={styles.conversationInfo}>
-          //       <Text style={styles.conversationName}>{item.name}</Text>
-          //       <Text style={styles.conversationMessage}>This is a message</Text>
-          //     </View>
-          //   </Pressable>
-          // </View>
         )}
         keyExtractor={(item, index) => item._id}
       />

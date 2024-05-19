@@ -275,14 +275,6 @@ const index = () => {
               </View>
             )}
 
-            {/* <View
-              style={{
-                height: 2,
-                borderColor: "black",
-                borderWidth: 2,
-              }}
-            /> */}
-
             <View
               style={{
                 flexDirection: "row",
@@ -299,14 +291,14 @@ const index = () => {
                   style={{ textAlign: "center" }}
                   name="like2"
                   size={24}
-                  color={item?.likes?.length > 0 ? "#0072b1" : "gray"}
+                  color={item?.likes?.some(item=>item.user === userId) ? "#0072b1" : "gray"}
                 />
                 <Text> </Text>
                 <Text
                   style={{
                     textAlign: "center",
                     fontSize: 12,
-                    color: item?.likes?.length > 0 ? "#0072b1" : "gray",
+                    color: item?.likes?.some(item=>item.user === userId) ? "#0072b1" : "gray",
                     marginTop: 2,
                   }}
                 >

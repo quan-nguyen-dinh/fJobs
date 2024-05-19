@@ -93,6 +93,29 @@ class PostController {
         res.status(500).json({ message: "Error liking the post" });
       }
     }
+
+    // [POST] /posts/create
+    //endpoint to create a post
+    async create(req, res) {
+      try {
+        const { description, imageUrl, userId } = req.body;
+    
+        const newPost = new Post({
+          description: description,
+          imageUrl: imageUrl,
+          user: userId,
+        });
+        await newPost.save();
+    
+        res
+          .status(201)
+          .json({ message: "Post created successfully", post: newPost });
+      } catch (error) {
+        console.log("error creating the post", error);
+        res.status(500).json({ message: "Error creating the post" });
+      }
+    }
+
     // [GET] /courses/:id/edit
     // edit(req, res, next) {
     //     Course.findById(req.params.id)

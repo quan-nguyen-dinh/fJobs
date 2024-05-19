@@ -51,7 +51,7 @@ const UserProfile = ({ item, userId }) => {
             borderRadius: 45,
             resizeMode: "cover",
           }}
-          source={{ uri: item?.profileImage }}
+          source={{ uri: item?.profileImage  || null}}
         />
       </View>
 

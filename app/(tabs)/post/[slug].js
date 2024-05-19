@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { REACT_APP_DEV_MODE } from "@env";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import moment from "moment";
 import { Ionicons, Entypo, Feather, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -22,12 +22,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import { socket } from "../../../App";
 
+const MAX_LINES = 2;
+
 const DetailPost = () => {
   console.log("-------------RE-RENDER-------------");
   const { slug } = useLocalSearchParams();
   const [post, setPost] = useState();
   const [userId, setUserId] = useState("");
-  const fetchPost = async () => {
+  const [comment, onChangeComment] = React.useState("");
+  const [showfullText, setShowfullText] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+
+  const fetchPost = useCallback(async () => {
     try {
       const response = await axios.get(`${REACT_APP_DEV_MODE}/posts/${slug}`);
       console.log('reqq')
@@ -35,11 +41,12 @@ const DetailPost = () => {
     } catch (error) {
       console.log("error fetching user profile", error);
     }
-  };
+  }, []);
+
   useEffect(() => {
     fetchPost();
   }, [slug]);
-  const [comment, onChangeComment] = React.useState("");
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -50,12 +57,11 @@ const DetailPost = () => {
 
     fetchUser();
   }, []);
-  const MAX_LINES = 2;
-  const [showfullText, setShowfullText] = useState(false);
+
   const toggleShowFullText = () => {
     setShowfullText(!showfullText);
   };
-  const [isLiked, setIsLiked] = useState(false);
+
   const handleLikePost = async (postId) => {
     try {
       const response = await axios.post(
@@ -65,11 +71,12 @@ const DetailPost = () => {
         const updatedPost = response.data.post;
         setIsLiked(updatedPost.likes.some((like) => like.user === userId));
       }
-    } catch (error) {
+    } catch (error) { 
       console.log("Error liking/unliking the post", error);
     }
   };
-  const handleComment = async () => {
+
+  const handleComment = useCallback(async () => {
     try {
       const newComment = {
         content: comment,
@@ -81,12 +88,11 @@ const DetailPost = () => {
       //     ...newComment
       //   }
       // );
-      // socket.emit('push-comment', newComment);
-      socket.emit('send-message', newComment);
+      socket.emit('push-comment', newComment);
       const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
-          ...newComment
-        }
+        `${REACT_APP_DEV_MODE}/posts/comment/${slug}`, {
+        ...newComment
+      }
       );
       if (response.status === 200) {
         console.log('sucessful')
@@ -100,7 +106,7 @@ const DetailPost = () => {
     } catch (error) {
       console.log("Error comment the post", error);
     }
-  };
+  });
   return (
     <SafeAreaView>
       <View key={post?._id}>
@@ -110,7 +116,7 @@ const DetailPost = () => {
             justifyContent: "space-between",
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginTop: 20, marginLeft:10 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginTop: 20, marginLeft: 10 }}>
             <Image
               style={{ width: 60, height: 60, borderRadius: 30 }}
               source={{ uri: post?.user?.profileImage || null }}
@@ -137,7 +143,7 @@ const DetailPost = () => {
               </Text>
             </View>
           </View>
-          
+
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <View style={{ flex: 1, marginLeft: 10 }}>
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>{post?.user?.name}</Text>
@@ -152,7 +158,7 @@ const DetailPost = () => {
             >
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </Pressable>
-            
+
           </View>
         </View>
 
@@ -215,9 +221,9 @@ const DetailPost = () => {
         />
 
         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
-          <Pressable 
+          <Pressable
             onPress={() => handleLikePost(post?._id)}
-            style={{flexDirection: 'row', alignItems: 'center'}}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
           >
             <AntDesign
               style={{ textAlign: "center" }}
@@ -227,86 +233,86 @@ const DetailPost = () => {
             />
             <Text style={{ marginLeft: 4, fontSize: 14, color: isLiked ? "#2078F4" : "gray" }}>Like</Text>
           </Pressable>
-          <Pressable style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => handleComment(post?._id)}>
+          <Pressable style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => handleComment(post?._id)}>
             <FontAwesome
               name="comment-o"
               size={20}
               style={{ textAlign: "center", color: "gray" }}
             />
-            <Text style={{ marginLeft: 4, fontSize: 14, color:'gray' }}>Comment</Text>
+            <Text style={{ marginLeft: 4, fontSize: 14, color: 'gray' }}>Comment</Text>
           </Pressable>
-          <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Pressable style={{ flexDirection: 'row', alignItems: 'center' }}>
             <AntDesign name="sharealt" size={23} color="gray" />
             <Text style={{ marginLeft: 4, fontSize: 14, color: "gray" }}>Share</Text>
           </Pressable>
         </View>
 
-          <View
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            gap: 5,
+            backgroundColor: "white",
+            paddingVertical: 5,
+            borderRadius: 25,
+            marginTop: 10,
+            borderWidth: 1,
+            borderColor: '#D2D7D3',
+            marginHorizontal: 5,
+          }}
+        >
+          <TextInput
+            value={comment}
+            onChangeText={onChangeComment}
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              alignItems:'center',              
-              gap: 5,
-              backgroundColor: "white",
-              paddingVertical: 5,
-              borderRadius: 25,
-              marginTop: 10,
-              borderWidth: 1,
-              borderColor: '#D2D7D3',
-              marginHorizontal: 5,
+              color: "gray",
+              marginLeft: 20,
+              marginVertical: 10,
+              width: 310,
+            }}
+            placeholder="Comment"
+
+          />
+          <Pressable
+            onPress={handleComment}
+            style={{
+              marginRight: 20
             }}
           >
-            <TextInput
-              value={comment}
-              onChangeText={onChangeComment}
-              style={{
-                color: "gray",
-                marginLeft: 20,
-                marginVertical: 10,
-                width: 310,                
-              }}
-              placeholder="Comment"
-              
-            />
-            <Pressable
-              onPress={handleComment}
-                style={{   
-                  marginRight: 20   
-                }}
-            >
-              <FontAwesome name="send" size={20} color="blue" />
-            </Pressable>
-          </View>
+            <FontAwesome name="send" size={20} color="blue" />
+          </Pressable>
         </View>
-        <FlatList
-          data={post?.comments}
-          renderItem={({ item }) => (
-            <View 
-              style={{ 
-                flexDirection: "row", 
-                padding: 10, 
-                alignItems: "center", 
+      </View>
+      <FlatList
+        data={post?.comments}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              flexDirection: "row",
+              padding: 10,
+              alignItems: "center",
             }}>
-              <Image
-                style={{ width: 40, height: 40, borderRadius: 20 }}
-                source={{ uri: item?.user?.profileImage }}
-              />
-              <View 
-                style={{ 
-                  marginLeft: 10,
-                  padding: 10,
-                  backgroundColor: '#E0E0E0',
-                  borderRadius: 10,
-                  marginBottom: 5,
-                  
+            <Image
+              style={{ width: 40, height: 40, borderRadius: 20 }}
+              source={{ uri: item?.user?.profileImage }}
+            />
+            <View
+              style={{
+                marginLeft: 10,
+                padding: 10,
+                backgroundColor: '#E0E0E0',
+                borderRadius: 10,
+                marginBottom: 5,
+
               }}>
-                <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
-                <Text>{item?.text}</Text>
-              </View>
+              <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
+              <Text>{item?.text}</Text>
             </View>
-          )}
-          keyExtractor={item => item._id}
-        />
+          </View>
+        )}
+        keyExtractor={item => item._id}
+      />
     </SafeAreaView>
   );
 };

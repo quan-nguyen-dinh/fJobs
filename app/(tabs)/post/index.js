@@ -43,7 +43,7 @@ const index = () => {
     });
 
     console.log('result', result);
-    if (!result.canceled) {
+    if (!result?.canceled) {
       setImage(result.assets[0].uri);
     }
   };
@@ -58,7 +58,7 @@ const index = () => {
       };
 
       const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/create`,
+        `${REACT_APP_DEV_MODE}/posts/create`,
         postData
       );
 

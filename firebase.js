@@ -2,15 +2,14 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/storage"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBUE9s3pBsx_w6o2HhsVjpTxEWuPdSbNq4",
-  authDomain: "pandain-6a49b.firebaseapp.com",
-  projectId: "pandain-6a49b",
-  storageBucket: "pandain-6a49b.appspot.com",
-  messagingSenderId: "86170109225",
-  appId: "1:86170109225:web:eba33f23dc591002fc2338",
-  measurementId: "G-3F4X3TRDK9"
-};
-
+  apiKey: "AIzaSyBkuF_wkwI2xQNfZUYtVzymxuFgV6eEwS4",
+  authDomain: "qqtalk-c1fad.firebaseapp.com",
+  projectId: "qqtalk-c1fad",
+  storageBucket: "qqtalk-c1fad.appspot.com",
+  messagingSenderId: "725384180255",
+  appId: "1:725384180255:web:42add1c7b0dc7d2faadb2a",
+  measurementId: "G-DG00VB04YL"
+}
 // Initialize Firebase
 if(!firebase.apps.length){
   firebase.initializeApp(firebaseConfig);
