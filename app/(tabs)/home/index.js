@@ -42,6 +42,7 @@ const index = () => {
     socket.emit('HOME', 'WE"RE AT HOME');
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
+      console.log('token: ', token)
       const decodedToken = jwt_decode(token);
       const userId = decodedToken.userId;
       setUserId(userId);

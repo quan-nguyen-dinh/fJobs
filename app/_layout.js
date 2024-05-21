@@ -4,7 +4,7 @@ import {
   DefaultTheme,
   useTheme,
 } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+// import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Screen } from "react-native-screens";
 import { Slot } from "expo-router";
 import { Text, View } from "react-native";
@@ -14,9 +14,9 @@ export default function RootLayoutNav() {
   return (
     <Provider store={store}>
       <ThemeProvider value={DefaultTheme}>
-        <SafeAreaProvider>
+        {/* <SafeAreaProvider> */}
           <Slot />
-        </SafeAreaProvider>
+        {/* </SafeAreaProvider> */}
       </ThemeProvider>
     </Provider>
   );
