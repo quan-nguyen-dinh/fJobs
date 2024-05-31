@@ -13,7 +13,8 @@ const UserProfile = ({ item, userId }) => {
   const [connectionSent, setConnectionSent] = useState(false);
   const sendConnectionRequest = async (currentUserId, selectedUserId) => {
     try {
-      const response = await fetch(`${REACT_APP_DEV_MODE}/connection-request`, {
+      console.log('send-request');
+      const response = await fetch(`${REACT_APP_DEV_MODE}/connection/request`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +52,7 @@ const UserProfile = ({ item, userId }) => {
             borderRadius: 45,
             resizeMode: "cover",
           }}
-          source={{ uri: item?.profileImage || null}}
+          source={{ uri: item?.profileImage }}
         />
       </View>
 

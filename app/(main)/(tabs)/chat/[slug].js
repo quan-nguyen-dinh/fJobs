@@ -8,7 +8,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import {socket}  from '../../../../App.js';
+import { socket } from "../../../../App.js";
 import React, {
   useState,
   useContext,
@@ -22,7 +22,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import EmojiSelector from "react-native-emoji-selector";
-import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
+import { Stack, router, useLocalSearchParams, useNavigation } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
@@ -87,17 +87,17 @@ const ChatDetail = () => {
     const token = await AsyncStorage.getItem("authToken");
     const decodedToken = jwt_decode(token);
     const userId = decodedToken.userId;
-    console.log('userId in local---------: ', userId);
-    return  userId;
+    console.log("userId in local---------: ", userId);
+    return userId;
   });
 
   //join room
-  useEffect(()=>{
+  useEffect(() => {
     const key = {
       userId,
-      recepientId
-    }
-    socket.emit('join-room', key);
+      recepientId,
+    };
+    socket.emit("join-room", key);
   }, []);
 
   useEffect(() => {
@@ -121,7 +121,7 @@ const ChatDetail = () => {
       const token = await AsyncStorage.getItem("authToken");
       const decodedToken = jwt_decode(token);
       const userId = decodedToken.userId;
-     
+
       const formData = new FormData();
       formData.append("senderId", userId);
       formData.append("recepientId", recepientId);
@@ -149,23 +149,23 @@ const ChatDetail = () => {
         messageType: "text",
         messageText: message,
       };
-      
+
       //? not working, but it work in another project
       // const response = await fetch(`${REACT_APP_DEV_MODE}/messages/chat`, {
       //   method: "POST",
       //   body: formData,
       // });
-      socket.emit('send-message', newMessage);
+      socket.emit("send-message", newMessage);
       // const response = await axios.post(
       //   `${REACT_APP_DEV_MODE}/messages/chat`,
       //   newMessage
       // );
       // console.log("res: ", response.status);
       // if (response.status == 200) {
-        setMessage("");
-        setSelectedImage("");
+      setMessage("");
+      setSelectedImage("");
 
-        fetchMessages();
+      fetchMessages();
       // }
     } catch (error) {
       console.log("error in sending the message", error);
@@ -173,11 +173,11 @@ const ChatDetail = () => {
   };
 
   useEffect(() => {
-    socket.on('receipt-message', data => {
-      console.log('RECIPET DATA: ', data);
+    socket.on("receipt-message", (data) => {
+      console.log("RECIPET DATA: ", data);
       // fetchMessages();
-    })
-  }, [socket])
+    });
+  }, [socket]);
   console.log("messages", selectedMessages);
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -199,15 +199,17 @@ const ChatDetail = () => {
             </View>
           ) : (
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Image
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 15,
-                  resizeMode: "cover",
-                }}
-                source={{ uri: recepientData?.profileImage }}
-              />
+              {recepientData?.profileImage && (
+                <Image
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: 15,
+                    resizeMode: "cover",
+                  }}
+                  source={{ uri: recepientData?.profileImage }}
+                />
+              )}
 
               <Text style={{ marginLeft: 5, fontSize: 15, fontWeight: "bold" }}>
                 {recepientData?.name}
@@ -229,7 +231,11 @@ const ChatDetail = () => {
               color="black"
             />
           </View>
-        ) : null,
+        ) : <View>
+          <Pressable onPress={()=>router.replace('/(main)/(call)')}>
+           <Text>Video call </Text>
+          </Pressable>
+        </View>,
     });
   }, [recepientData, selectedMessages]);
 
@@ -288,7 +294,7 @@ const ChatDetail = () => {
       ]);
     }
   };
-  console.log('userid GLOBAL---------------: ', userId);
+  console.log("userid GLOBAL---------------: ", userId);
   return (
     <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "#F0F0F0" }}>
       <ScrollView
@@ -378,7 +384,7 @@ const ChatDetail = () => {
               >
                 <View>
                   <Image
-                    source={source}
+                    source={source || null}
                     style={{ width: 200, height: 200, borderRadius: 7 }}
                   />
                   <Text

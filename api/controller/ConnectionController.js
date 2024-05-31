@@ -3,6 +3,7 @@ const User = require("../models/user");
 
 class ConnectionController {
       // [GET] /request/:userId
+    // enpoint to get all request connection.
     async getRequest(req, res) {
         try {
             const { userId } = req.params;
@@ -20,6 +21,7 @@ class ConnectionController {
           }
     }
     // [POST] /request
+    // enpoint to request connection to a person.
     async request(req, res) {
         try {
             const { currentUserId, selectedUserId } = req.body;
@@ -66,6 +68,7 @@ class ConnectionController {
           }
     }
     // [GET] /all
+    // endpoint to get all connections
     async show(req, res) {
         try {
             const userId = req.params.userId;

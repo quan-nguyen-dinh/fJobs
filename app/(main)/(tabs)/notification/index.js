@@ -1,19 +1,30 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
+import { socket } from '../../../../App';
 // import { socket } from '../../../App';
 
 const index = () => {
     // const [isNotify, setIsNotify] = useState(false);
     // const [commentNotify, setCommentNotify] = useState();
-    // useEffect(()=>{
-    //     socket.on("comment", (data)=>{
-    //         setIsNotify(true);
-    //         console.log('data: ', data);
-    //         setCommentNotify(data);
-    //     })
-    // }, [])
+    const onLikePost = useCallback((data)=>{
+      console.log('SOME ONE LIKE YOU POST', data);
+    }, [socket]);
+
+    useEffect(()=>{
+        socket.on("comment", (data)=>{
+            setIsNotify(true);
+            console.log('data: ', data);
+            setCommentNotify(data);
+        });
+        socket.on('liked-post', onLikePost);
+
+        return () => {
+          socket.off('comment', ()=>{});
+          socket.off('liked-post', onLikePost);
+        }
+    }, [])
     const navigation = useNavigation();
 
     const handleSearch = () => {
@@ -21,17 +32,11 @@ const index = () => {
     };
     return (
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.headerText}>NOTIFICATION</Text>
-            <TouchableOpacity onPress={handleSearch}>
-              <Ionicons name="search" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
           <FlatList
-            data={Array(10).fill(null)}
+            data={Array(20).fill(null)}
             renderItem={() => (
               <View style={styles.notificationContainer}>
-                <Image source={{uri: 'url image'}} style={styles.avatar} />
+                <Image source={{uri: ''}} style={styles.avatar} />
                 <View style={styles.notificationInfo}>
                   <Text style={styles.notificationText}>User Name commented on your post</Text>
                   <Text style={styles.notificationTime}>2h</Text>
@@ -47,6 +52,7 @@ const index = () => {
     const styles = StyleSheet.create({
         container: {
           flex: 1,
+          backgroundColor: '#fff',
           padding: 10,
         },
         header: {

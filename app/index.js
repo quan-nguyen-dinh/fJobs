@@ -1,6 +1,8 @@
 import { Redirect } from "expo-router";
 import React from "react";
 
+console.disableYellowBox = true
+
 const index = () => {
   return (
       <Redirect href="/(authenticate)/login" />
@@ -8,5 +10,3 @@ const index = () => {
 };
 
 export default index;
-
-//index.js => /

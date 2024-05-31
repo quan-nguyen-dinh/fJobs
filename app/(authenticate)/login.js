@@ -52,11 +52,13 @@ const login = () => {
           email: email,
           password: password
       }
-      // console.log('user: ', user);
+      console.log('user: ', user);
       axios.post(`${REACT_APP_DEV_MODE}/login`, user).then((response) => {
           console.log(response);
           const token = response.data.token;
+          const tokenStream = response.data.tokenStream;
           AsyncStorage.setItem("authToken",token);
+          AsyncStorage.setItem("tokenStream", tokenStream);
           router.replace("/(main)/(tabs)/home");
       }).catch(error=>{
           console.log('login error: ', error);

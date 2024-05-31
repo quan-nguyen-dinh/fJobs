@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+const defaultProfileImg = 'https://i.pinimg.com/736x/c0/27/be/c027bec07c2dc08b9df60921dfd539bd.jpg';
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -18,12 +20,11 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  //    job: {
-  //         type:String,
-  //         require:true,
-  //    },
   verificationToken: String,
-  profileImage: String,
+  profileImage: {
+    type: String,
+    default: defaultProfileImg
+  },
   userDescription: {
     type: String,
     default: null,

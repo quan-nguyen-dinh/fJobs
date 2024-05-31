@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
-const { generateSecretKey } = require("../helper");
+const { generateSecretKey, client } = require("../helper");
 const crypto = require("crypto");
 
 class SiteController {
@@ -52,12 +52,20 @@ class SiteController {
 
       //generate the verification token
       newUser.verificationToken = crypto.randomBytes(20).toString("hex");
+      console.log('newUser: ', newUser);
+          // Create user in Stream Chat
+      await client.upsertUser({
+        id: newUser._id.toString(),
+        email,
+        name: email,
+      });
 
+    // Create token for user
+     const token = client.createToken(newUser._id.toString());
       //save the user to the database
       await newUser.save();
 
       //send the verification email to the registered user
-      this.sendVerificationEmail(newUser.email, newUser.verificationToken);
 
       res.status(202).json({
         message:
@@ -108,8 +116,10 @@ class SiteController {
       }
       const secretKey = generateSecretKey();
       const token = jwt.sign({ userId: user._id }, secretKey);
-
-      res.status(200).json({ token });
+      const tokenStream = client.createToken(user._id.toString());
+      console.log('token: ', token);
+      console.log('tokenStream: ', tokenStream);
+      res.status(200).json({ token, tokenStream });
     } catch (error) {
       console.log('error: ', error);
       res.status(500).json({ message: "Login failed" });

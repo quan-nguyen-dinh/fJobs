@@ -134,7 +134,7 @@ const profile = () => {
           <View style={{ position: "absolute", top: 130, left: 10 }}>
             <Image
               style={{ width: 120, height: 120, borderRadius: 60 }}
-              source={{ uri: user?.profileImage }}
+              source={{ uri: user?.profileImage|| null }}
             />
           </View>
   

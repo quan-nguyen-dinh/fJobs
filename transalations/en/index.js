@@ -1,6 +1,7 @@
 export default en = {
   welcome: "Hello",
   name: "Charlie",
+  plName: "Enter your name",
   plEmail: "Enter your email",
   plPassword: "Enter your password",
   btnFortgotPass: "Forgot Password",

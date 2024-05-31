@@ -1,10 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  FlatList,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable, FlatList } from "react-native";
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
@@ -14,7 +8,7 @@ import { Entypo } from "@expo/vector-icons";
 import UserProfile from "../../../../components/UserProfile";
 import ConnectionRequest from "../../../../components/ConnectionRequest";
 import { useRouter } from "expo-router";
-import {REACT_APP_DEV_MODE} from '@env';
+import { REACT_APP_DEV_MODE } from "@env";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const index = () => {
@@ -75,10 +69,11 @@ const index = () => {
       fetchFriendRequests();
     }
   }, [userId]);
+  console.log('RE-RENDER NETWORK')
   const fetchFriendRequests = async () => {
     try {
       const response = await axios.get(
-        `${REACT_APP_DEV_MODE}/connection-request/${userId}`
+        `${REACT_APP_DEV_MODE}/connection/request/${userId}`
       );
       if (response.status === 200) {
         const connectionRequestsData = response.data?.map((friendRequest) => ({
@@ -87,7 +82,7 @@ const index = () => {
           email: friendRequest.email,
           image: friendRequest.profileImage,
         }));
-        console.log('connection: ', connectionRequestsData);
+        console.log("connection: ", connectionRequestsData);
         setConnectionRequests(connectionRequestsData);
       }
     } catch (error) {
@@ -116,7 +111,7 @@ const index = () => {
         style={{ borderColor: "#E0E0E0", borderWidth: 2, marginVertical: 10 }}
       />
 
-      <View
+      <Pressable
         style={{
           marginTop: 10,
           marginHorizontal: 10,
@@ -124,28 +119,17 @@ const index = () => {
           alignItems: "center",
           justifyContent: "space-between",
         }}
+        onPress={() => router.push("/network/invitation")}
       >
-        <Text style={{ fontSize: 16, fontWeight: "600" }}>Invitations (0)</Text>
+        <Text style={{ fontSize: 16, fontWeight: "600" }}>
+          Invitations ({connectionRequests.length})
+        </Text>
         <AntDesign name="arrowright" size={22} color="black" />
-      </View>
+      </Pressable>
 
       <View
         style={{ borderColor: "#E0E0E0", borderWidth: 2, marginVertical: 10 }}
       />
-      {connectionRequests.length > 0 && <FlatList
-        data={connectionRequests}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item, key }) => (
-          <ConnectionRequest
-            item={item}
-            key={item._id}
-            connectionRequests={connectionRequests}
-            setConnectionRequests={setConnectionRequests}
-            userId={userId}
-          />
-        )}
-      />
-} 
 
       <View style={{ marginHorizontal: 15 }}>
         <View
@@ -159,10 +143,10 @@ const index = () => {
           <Entypo name="cross" size={24} color="black" />
         </View>
 
-        <Text>
+        {/* <Text>
           Find and contact the right people. Plus see who's viewed your profile
-        </Text>
-        <View
+        </Text> */}
+        {/* <View
           style={{
             backgroundColor: "#FFC72C",
             width: 140,
@@ -177,7 +161,7 @@ const index = () => {
           >
             Try Premium
           </Text>
-        </View>
+        </View> */}
       </View>
       <FlatList
         data={users}

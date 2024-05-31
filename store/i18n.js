@@ -11,7 +11,6 @@ export const i18nSlice = createSlice({
   initialState,
   reducers: {
     changeLocale: (state, action) => {
-        console.log('actions: ', action);
         state.i18n.locale = action.payload
     }
   },

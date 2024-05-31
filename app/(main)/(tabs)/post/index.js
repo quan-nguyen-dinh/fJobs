@@ -181,7 +181,7 @@ const index = () => {
       <View>
         {image && (
           <Image
-            source={{ uri: image }}
+            source={{ uri: image || null}}
             style={{ width: "100%", height: 240, marginVertical: 20 }}
           />
         )}

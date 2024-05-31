@@ -25,9 +25,18 @@ const io = new Server(http);
 
 io.on('connection', (socket) => {
   console.log('a user connected');
+  socket.on('like-post', (data)=>{
+    console.log('LIKE-POST: ', data);
+    socket.emit('liked-post', data);
+
+  })
   socket.on('chat', (data)=>{
     console.log('----------------------------');
     console.log('data: ', data);
+  });
+  socket.on('create-room', (data)=>{
+    console.log('CREATE-ROOM: ', data);
+    // socket.emit
   })
   socket.on('push-comment', async (data) => {
     console.log('data: ', data);
@@ -67,125 +76,6 @@ io.on('connection', (socket) => {
 http.listen(port, () => {
   console.log("Server is running on port "+port);
 });
-
-//endpoint to register a user in the backend
-// app.post("/register", async (req, res) => {
-//   try {
-//     const { name, email, password, profileImage } = req.body;
-//     console.log('userinfo: ', name, email, profileImage);
-//     //check if the email is already registered
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) {
-//       console.log("Email already registered");
-//       return res.status(400).json({ message: "Email already registered" });
-//     }
-
-//     //create a new User
-//     const newUser = new User({
-//       name,
-//       email,
-//       password,
-//       profileImage,
-//     });
-
-//     //generate the verification token
-//     newUser.verificationToken = crypto.randomBytes(20).toString("hex");
-
-//     //save the user to the database
-//     await newUser.save();
-
-//     //send the verification email to the registered user
-//     sendVerificationEmail(newUser.email, newUser.verificationToken);
-
-//     res.status(202).json({
-//       message:
-//         "Registration successful.Please check your mail for verification",
-//     });
-//   } catch (error) {
-//     console.log("Error registering user", error);
-//     res.status(500).json({ message: "Registration failed" });
-//   }
-// });
-
-// const sendVerificationEmail = async (email, verificationToken) => {
-//   const transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     auth: {
-//       user: "sujananand0@gmail.com",
-//       pass: "rnzcugnscqtqiefs",
-//     },
-//   });
-
-//   const mailOptions = {
-//     from: "linkedin@gmail.com",
-//     to: email,
-//     subject: "Email Verification",
-//     text: `please click the following link to verify your email : ${REACT_APP_DEV_MODE}/verify/${verificationToken}`,
-//   };
-
-//   //send the mail
-//   try {
-//     await transporter.sendMail(mailOptions);
-//     console.log("Verification email sent successfully");
-//   } catch (error) {
-//     console.log("Error sending the verification email");
-//   }
-// };
-
-//endpoint to verify email
-// app.get("/verify/:token", async (req, res) => {
-//   try {
-//     const token = req.params.token;
-
-//     const user = await User.findOne({ verificationToken: token });
-//     if (!user) {
-//       return res.status(404).json({ message: "Invalid verification token" });
-//     }
-
-//     //mark the user as verified
-//     user.verified = true;
-//     user.verificationToken = undefined;
-
-//     await user.save();
-
-//     res.status(200).json({ message: "Email verified successfully" });
-//   } catch (error) {
-//     res.status(500).json({ message: "Email verification failed" });
-//   }
-// });
-
-// const generateSecretKey = () => {
-//   const secretKey = crypto.randomBytes(32).toString("hex");
-
-//   return secretKey;
-// };
-
-// const secretKey = generateSecretKey();
-
-//endpoint to login a user.
-// app.post("/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     //check if user exists already
-//     const user = await User.findOne({ email });
-//     console.log('checklogin: ', user);
-//     if (!user) {
-//       return res.status(401).json({ message: "Invalid email or password" });
-//     }
-
-//     //check if password is correct
-//     if (user.password !== password) {
-//       return res.status(401).json({ message: "Invalid password" });
-//     }
-
-//     const token = jwt.sign({ userId: user._id }, secretKey);
-
-//     res.status(200).json({ token });
-//   } catch (error) {
-//     res.status(500).json({ message: "Login failed" });
-//   }
-// });
 
 //user's profile
 // app.get("/profile/:userId", async (req, res) => {
@@ -233,42 +123,6 @@ http.listen(port, () => {
 //   }
 // });
 
-//todo: send a connection request
-// app.post("/connection-request", async (req, res) => {
-//   try {
-//     const { currentUserId, selectedUserId } = req.body;
-
-//     await User.findByIdAndUpdate(selectedUserId, {
-//       $push: { connectionRequests: currentUserId },
-//     });
-
-//     await User.findByIdAndUpdate(currentUserId, {
-//       $push: { sentConnectionRequests: selectedUserId },
-//     });
-
-//     res.sendStatus(200);
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating connection request" });
-//   }
-// });
-
-//todo: endpoint to show all the connections requests
-// app.get("/connection-request/:userId", async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-
-//     const user = await User.findById(userId)
-//       .populate("connectionRequests", "name email profileImage")
-//       .lean();
-
-//     const connectionRequests = user.connectionRequests;
-
-//     res.json(connectionRequests);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// });
 
 //todo: endpoint to accept a connection request
 // app.post("/connection-request/accept", async (req, res) => {

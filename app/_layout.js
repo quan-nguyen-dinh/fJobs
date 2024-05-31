@@ -6,12 +6,15 @@ import {
 } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Screen } from "react-native-screens";
-import { Slot } from "expo-router";
+import { Slot, router } from "expo-router";
 import { Text, View } from "react-native";
 import { Provider } from "react-redux";
 import { store } from "../store";
 import { useEffect } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
+import { OverlayContext, OverlayProvider } from "stream-chat-expo";
+import { socket } from "../App";
+import { INCOMMING_CALL } from "../constants/event";
 
 export default function RootLayoutNav() {
   useEffect(() => {
@@ -24,15 +27,27 @@ export default function RootLayoutNav() {
       }
     };
     run();
+
+    const handleIncomingCall = async (data) => {
+      if(data.userId) {
+        router.replace(`/(main)/(call)/${data?.callId}`);
+      }
+    }
+    socket.on(INCOMMING_CALL, handleIncomingCall);
+    return () => {
+      socket.off(INCOMMING_CALL, handleIncomingCall)
+    }
   }, []);
   
   return (
     <Provider store={store}>
-      <ThemeProvider value={DefaultTheme}>
-        <SafeAreaProvider>
-          <Slot />
-        </SafeAreaProvider>
-      </ThemeProvider>
+      <OverlayProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <SafeAreaProvider>
+            <Slot />
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </OverlayProvider>
     </Provider>
   );
 }

@@ -13,24 +13,33 @@ import React, { useState, useEffect, useTransition } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
-import { Ionicons, Entypo, EvilIcons, Feather, FontAwesome, Octicons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  Entypo,
+  EvilIcons,
+  Feather,
+  FontAwesome,
+  Octicons,
+} from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import moment from "moment";
 import { useRouter } from "expo-router";
-import { REACT_APP_DEV_MODE } from '@env';
-import { I18n } from 'i18n-js';
+import { REACT_APP_DEV_MODE } from "@env";
+import { I18n } from "i18n-js";
 import { useDispatch, useSelector } from "react-redux";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { socket } from "../../../../App";
 import { SearchBar } from "react-native-screens";
 import transalations from "../../../../transalations";
-
+import { LIKE_POST } from "../../../../constants/event";
 
 const i18n = new I18n(transalations);
 // i18n.enableFallback = true;
 // i18n.locale = 'en';
-
 
 const index = () => {
   const [userId, setUserId] = useState("");
@@ -38,7 +47,7 @@ const index = () => {
   const [posts, setPosts] = useState([]);
   const a = useTransition();
   useEffect(() => {
-    socket.emit('HOME', 'WE"RE AT HOME');
+    socket.emit("HOME", 'WE"RE AT HOME');
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
       const decodedToken = jwt_decode(token);
@@ -84,32 +93,41 @@ const index = () => {
   const [isLiked, setIsLiked] = useState(false);
   const handleLikePost = async (postId) => {
     try {
-      console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`)
+      console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`);
       const response = await axios.post(
         `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`
       );
+      socket.emit(LIKE_POST, {
+        postId,
+        userId
+      });
       if (response.status === 200) {
         const updatedPost = response.data.post;
-        console.log(updatedPost, ' updatePost: ');
+        console.log(updatedPost, " updatePost: ");
         if (updatedPost) {
-          console.log(updatedPost.id, 'LIKE: ', updatedPost.likes?.length);
+          console.log(updatedPost.id, "LIKE: ", updatedPost.likes?.length);
         }
-        console.log('posts', posts);
-        setPosts(prevPosts => {
+        console.log("posts", posts);
+        setPosts((prevPosts) => {
           const newPosts = [...prevPosts];
-          newPosts.forEach(post => {
+          newPosts.forEach((post) => {
             if (post._id === updatedPost._id) {
-              console.log('LIKE: ', post.likes?.length, 'UPDATE POST: ', updatedPost.likes?.length);
+              console.log(
+                "LIKE: ",
+                post.likes?.length,
+                "UPDATE POST: ",
+                updatedPost.likes?.length
+              );
               post.likes = updatedPost.likes;
               //post = updatePost not update likes properties of the post
-              console.log(post._id, ' LIKE: ', post.likes?.length,);
+              console.log(post._id, " LIKE: ", post.likes?.length);
             }
           });
-          newPosts.forEach(post => {
-            console.log('POST: ', post._id, post.likes?.length);
-          })
+          newPosts.forEach((post) => {
+            console.log("POST: ", post._id, post.likes?.length);
+          });
           return newPosts;
-        })
+        });
         // setIsLiked(updatedPost.likes.some((like) => like.user === userId));
       }
     } catch (error) {
@@ -118,13 +136,13 @@ const index = () => {
   };
   const router = useRouter();
   const handleComment = async (postId) => {
-    console.log('postId: ', postId);
+    console.log("postId: ", postId);
     router.push(`/post/${postId}`);
   };
-  const count = useSelector((state) => state.counter.value)
+  const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
   return (
-    <SafeAreaView style={{ backgroundColor: 'white' }}>
+    <SafeAreaView style={{ backgroundColor: "white" }}>
       <View
         style={{
           padding: 10,
@@ -132,22 +150,20 @@ const index = () => {
           alignItems: "center",
           gap: 4,
           borderBottomWidth: 0.5,
-          borderBottomColor: 'gray'
+          borderBottomColor: "gray",
         }}
       >
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-
           <Pressable onPress={() => router.push("/home/profile")}>
             <Image
               style={{ width: 35, height: 35, borderRadius: 15 }}
-              source={{ uri: user?.profileImage || null }}
+              source={{ uri: user?.profileImage }}
             />
           </Pressable>
           <Text
@@ -155,9 +171,11 @@ const index = () => {
               paddingLeft: 5,
               fontSize: 18,
               fontWeight: 800,
-              color: '#1877F2'
+              color: "#1877F2",
             }}
-          >QQ Talk</Text>
+          >
+            QQ Talk
+          </Text>
         </View>
 
         <Pressable
@@ -171,7 +189,7 @@ const index = () => {
             height: 30,
             flex: 1,
             borderWidth: 1,
-            borderColor: 'gray'
+            borderColor: "gray",
           }}
         >
           <AntDesign
@@ -189,7 +207,7 @@ const index = () => {
       <FlatList
         data={posts}
         renderItem={({ item }) => (
-          <View key={item._id} style={{ backgroundColor: 'white' }}>
+          <View key={item._id} style={{ backgroundColor: "white" }}>
             <View
               style={{
                 flexDirection: "row",
@@ -198,18 +216,23 @@ const index = () => {
               }}
             >
               <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingTop: 3 }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  paddingTop: 3,
+                }}
               >
                 <Image
                   style={{ width: 50, height: 50, borderRadius: 30 }}
-                  source={{ uri: item?.user?.profileImage || null }}
+                  source={{ uri: item?.user?.profileImage }}
                 />
 
                 <View style={{ flexDirection: "column", gap: 2 }}>
                   <Text style={{ fontSize: 15, fontWeight: "600" }}>
                     {item?.user?.name}
                   </Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Text
                       numberOfLines={1}
                       ellipsizeMode="tail"
@@ -248,7 +271,7 @@ const index = () => {
               </Text>
               {!showfullText && (
                 <Pressable onPress={toggleShowFullText}>
-                  <Text style={{ color: '#1877F2' }}>See more</Text>
+                  <Text style={{ color: "#1877F2" }}>See more</Text>
                 </Pressable>
               )}
             </View>
@@ -274,14 +297,6 @@ const index = () => {
               </View>
             )}
 
-            {/* <View
-              style={{
-                height: 2,
-                borderColor: "black",
-                borderWidth: 2,
-              }}
-            /> */}
-
             <View
               style={{
                 flexDirection: "row",
@@ -290,10 +305,17 @@ const index = () => {
                 marginVertical: 10,
                 paddingTop: 10,
                 borderTopWidth: 0.2,
-                borderTopColor: 'gray'
+                borderTopColor: "gray",
               }}
             >
-              <Pressable style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => handleLikePost(item?._id)}>
+              <Pressable
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={() => handleLikePost(item?._id)}
+              >
                 <AntDesign
                   style={{ textAlign: "center" }}
                   name="like2"
@@ -312,7 +334,10 @@ const index = () => {
                   Like
                 </Text>
               </Pressable>
-              <Pressable style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => handleComment(item?._id)}>
+              <Pressable
+                style={{ flexDirection: "row", alignItems: "center" }}
+                onPress={() => handleComment(item?._id)}
+              >
                 <FontAwesome
                   name="comment-o"
                   size={20}
@@ -331,7 +356,7 @@ const index = () => {
                   Comment
                 </Text>
               </Pressable>
-              <Pressable style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
                 <AntDesign name="link" size={22} color="gray" />
                 <Text> </Text>
                 <Text
@@ -345,7 +370,7 @@ const index = () => {
                   Copy
                 </Text>
               </Pressable>
-              <Pressable style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
                 <AntDesign name="sharealt" size={23} color="gray" />
                 <Text> </Text>
                 <Text style={{ marginTop: 2, fontSize: 12, color: "gray" }}>
@@ -353,27 +378,32 @@ const index = () => {
                 </Text>
               </Pressable>
             </View>
-      
           </View>
         )}
-        ItemSeparatorComponent={() => <View
-          style={{
-            height: 2,
-            borderColor: "#D2D7D3",
-            borderWidth: 2,
-          }}
-        />}
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 2,
+              borderColor: "#D2D7D3",
+              borderWidth: 2,
+            }}
+          />
+        )}
         keyExtractor={(item) => item._id}
-        ListHeaderComponent={() => <SearchBar placeholder="Type Here..." lightTheme round />}
-        ListFooterComponent={() => <View
-          style={{
-            paddingVertical: 20,
-            borderTopWidth: 1,
-            borderColor: "#CED0CE"
-          }}
-        >
-          <ActivityIndicator animating size="large" />
-        </View>}
+        ListHeaderComponent={() => (
+          <SearchBar placeholder="Type Here..." lightTheme round />
+        )}
+        ListFooterComponent={() => (
+          <View
+            style={{
+              paddingVertical: 20,
+              borderTopWidth: 1,
+              borderColor: "#CED0CE",
+            }}
+          >
+            <ActivityIndicator animating size="large" />
+          </View>
+        )}
       />
     </SafeAreaView>
   );

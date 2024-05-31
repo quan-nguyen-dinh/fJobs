@@ -7,6 +7,15 @@ import {REACT_APP_DEV_MODE} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from "jwt-decode";
 import MessageItem from '../../../../components/MessageItem';
+import {
+  CallContent,
+  StreamCall,
+  StreamVideo,
+  StreamVideoClient,
+  User,
+} from "@stream-io/video-react-native-sdk";
+import { useRouter } from "expo-router";
+
 
 function index() {
   const [friends, setFriends] = useState([]);
@@ -59,15 +68,6 @@ function index() {
         data={friends}
         renderItem={({item}) => (
           <MessageItem item={item}/>
-          // <View >
-          //   <Pressable style={styles.conversationContainer} onPress={() => handleMessage()}>
-          //     <Image source={{uri: item?.profileImage || null}} style={styles.avatar} />
-          //     <View style={styles.conversationInfo}>
-          //       <Text style={styles.conversationName}>{item.name}</Text>
-          //       <Text style={styles.conversationMessage}>This is a message</Text>
-          //     </View>
-          //   </Pressable>
-          // </View>
         )}
         keyExtractor={(item, index) => item._id}
       />

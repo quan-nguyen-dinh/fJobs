@@ -10,10 +10,11 @@ const ConnectionRequest = ({
   setConnectionRequests,
   userId,
 }) => {
+  console.log('item: ', item);
   const acceptConnection = async (requestId) => {
     try {
       const response = await fetch(
-        `${REACT_APP_DEV_MODE}/connection-request/accept`,
+        `${REACT_APP_DEV_MODE}/connection/request/accept`,
         {
           method: "POST",
           headers: {
@@ -40,11 +41,11 @@ const ConnectionRequest = ({
       <View style={{ flexDirection: "row", alignItems: "center", gap: 7 }}>
         <Image
           style={{ width: 50, height: 50, borderRadius: 25 }}
-          source={{ uri: item?.profileImage || null }}
+          source={{ uri: item?.image || null }}
         />
 
         <Text style={{ width: 200 }}>
-          {item?.name} is Inviting you to Connect
+          {item?.name} is inviting you to connect.
         </Text>
 
         <View style={{ flexDirection: "row", alignItems: "center", gap: 7 }}>

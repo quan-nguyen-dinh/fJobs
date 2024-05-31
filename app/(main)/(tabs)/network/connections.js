@@ -44,7 +44,7 @@ const connections = () => {
   const fetchConnections = async () => {
     try {
       const response = await axios.get(
-        `${REACT_APP_DEV_MODE}/connections/${userId}`
+        `${REACT_APP_DEV_MODE}/connection/all/${userId}`
       );
       setConnections(response.data.connections);
     } catch (error) {

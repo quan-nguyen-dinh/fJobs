@@ -21,6 +21,7 @@ import { SimpleLineIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import { socket } from "../../../../App";
+import { ActivityIndicator } from "react-native-web";
 
 const MAX_LINES = 2;
 
@@ -212,7 +213,7 @@ const DetailPost = () => {
         {post?.imageUrl && (
           <Image
             style={{ width: "100%", height: 240 }}
-            source={{ uri: post?.imageUrl }}
+            source={{ uri: post?.imageUrl || null}}
           />
         )}
 
@@ -313,7 +314,7 @@ const DetailPost = () => {
             }}>
               <Image
                 style={{ width: 40, height: 40, borderRadius: 20 }}
-                source={{ uri: item?.user?.profileImage }}
+                source={{ uri: item?.user?.profileImage || null}}
               />
               <View 
                 style={{ 
@@ -330,6 +331,16 @@ const DetailPost = () => {
             </View>
           )}
           keyExtractor={item => item._id}
+          ListFooterComponent={() => (
+            <View
+              style={{
+                paddingVertical: 20,
+                borderTopWidth: 1,
+                borderColor: "#CED0CE",
+              }}
+            >
+            </View>
+          )}
         />
     </SafeAreaView>
   );
