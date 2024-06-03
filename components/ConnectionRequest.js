@@ -14,11 +14,7 @@ const ConnectionRequest = ({
   const acceptConnection = async (requestId) => {
     try {
       const response = await fetch(
-<<<<<<< Updated upstream
         `${REACT_APP_DEV_MODE}/connection/request/accept`,
-=======
-        `http://192.168.212.104:3001/connection-request/accept`,
->>>>>>> Stashed changes
         {
           method: "POST",
           headers: {

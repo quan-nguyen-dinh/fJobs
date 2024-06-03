@@ -37,7 +37,6 @@ const Register = () => {
     };
     console.log("hello: ", user);
 
-<<<<<<< Updated upstream
     axios
       .post(`${REACT_APP_DEV_MODE}/register`, user)
       .then((response) => {
@@ -58,18 +57,6 @@ const Register = () => {
           "Registration failed",
           "An error occurred while registering" + error
         );
-=======
-      axios.post(`http://192.168.212.104:3001/register`,user).then((response) => {
-          console.log(response);
-          Alert.alert("Registration successful","You have been registered successfully");
-          setName("");
-          setEmail("");
-          setPassword("");
-          setImage("");
-      }).catch((error) => {
-        console.log("registration failed",error)
-          Alert.alert("Registration failed","An error occurred while registering"+error);
->>>>>>> Stashed changes
       });
   }, [name, email, password, image]);
 

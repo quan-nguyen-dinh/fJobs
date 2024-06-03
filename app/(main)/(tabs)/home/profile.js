@@ -46,7 +46,7 @@ const profile = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
-        `http://192.168.212.104:3001/profile/${userId}`
+        `${REACT_APP_DEV_MODE}/profile/${userId}`
       );
       const userData = response.data.user;
       setUser(userData);
@@ -58,7 +58,7 @@ const profile = () => {
   const handleSaveDescription = async () => {
     try {
       const response = await axios.put(
-        `http://192.168.212.104:3001/profile/${userId}`,
+        `${REACT_APP_DEV_MODE}/profile/${userId}`,
         {
           userDescription,
         }
@@ -267,18 +267,17 @@ const profile = () => {
   
           <Pressable
             style={{
-              width: 60,
-              height: 30,
-              marginTop: 10,
-              marginLeft: 15,
+              width: '100%',
+              height: 40,
+              marginTop: 20,
               backgroundColor: "#d4cac9",
               justifyContent: "center",
               alignItems: "center",
-              borderRadius: 50,
+              borderRadius: 8,
             }}
             onPress={logout}
           >
-            <Text style={{ color: "#c21806" }}>Logout</Text>
+            <Text style={{ color: "#c21806", fontWeight: 'bold' }}>Logout</Text>
           </Pressable>
         </View>
       </ScrollView>

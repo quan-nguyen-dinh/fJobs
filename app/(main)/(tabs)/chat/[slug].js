@@ -65,7 +65,7 @@ const ChatDetail = () => {
       const userId = decodedToken.userId;
       setUserId(userId);
       const response = await fetch(
-        `http://192.168.212.104:3001/messages/${userId}/${recepientId}`
+        `${REACT_APP_DEV_MODE}/messages/${userId}/${recepientId}`
       );
       const data = await response.json();
 
@@ -104,7 +104,7 @@ const ChatDetail = () => {
     const fetchRecepientData = async () => {
       try {
         const response = await fetch(
-          `http://192.168.212.104:3001/users/info/${recepientId}`
+          `${REACT_APP_DEV_MODE}/users/info/${recepientId}`
         );
 
         const data = await response.json();
@@ -151,13 +151,13 @@ const ChatDetail = () => {
       };
 
       //? not working, but it work in another project
-      // const response = await fetch(`http://192.168.212.104:3001/messages/chat`, {
+      // const response = await fetch(`${REACT_APP_DEV_MODE}/messages/chat`, {
       //   method: "POST",
       //   body: formData,
       // });
       socket.emit("send-message", newMessage);
       // const response = await axios.post(
-      //   `http://192.168.212.104:3001/messages/chat`,
+      //   `${REACT_APP_DEV_MODE}/messages/chat`,
       //   newMessage
       // );
       // console.log("res: ", response.status);
@@ -241,7 +241,7 @@ const ChatDetail = () => {
 
   const deleteMessages = async (messageIds) => {
     try {
-      const response = await fetch("http://192.168.212.104:3001/deleteMessages", {
+      const response = await fetch("${REACT_APP_DEV_MODE}/deleteMessages", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

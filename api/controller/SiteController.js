@@ -18,7 +18,7 @@ class SiteController {
       from: "linkedin@gmail.com",
       to: email,
       subject: "Email Verification",
-      text: `please click the following link to verify your email : http://192.168.212.104:3001/verify/${verificationToken}`,
+      text: `please click the following link to verify your email : ${REACT_APP_DEV_MODE}/verify/${verificationToken}`,
     };
 
     //send the mail

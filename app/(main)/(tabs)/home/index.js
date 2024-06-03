@@ -65,7 +65,7 @@ const index = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
-        `http://192.168.212.104:3001/profile/${userId}`
+        `${REACT_APP_DEV_MODE}/profile/${userId}`
       );
       const userData = response.data.user;
       setUser(userData);
@@ -76,7 +76,7 @@ const index = () => {
   useEffect(() => {
     const fetchAllPosts = async () => {
       try {
-        const response = await axios.get(`http://192.168.212.104:3001/posts/all`);
+        const response = await axios.get(`${REACT_APP_DEV_MODE}/posts/all`);
         setPosts(response.data.posts);
       } catch (error) {
         console.log("error fetching posts", error);
@@ -93,13 +93,9 @@ const index = () => {
   const [isLiked, setIsLiked] = useState(false);
   const handleLikePost = async (postId) => {
     try {
-<<<<<<< Updated upstream:app/(main)/(tabs)/home/index.js
       console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`);
-=======
-      console.log(`http://192.168.212.104:3001/posts/like/${postId}/${userId}`)
->>>>>>> Stashed changes:app/(tabs)/home/index.js
       const response = await axios.post(
-        `http://192.168.212.104:3001/posts/like/${postId}/${userId}`
+        `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`
       );
       socket.emit(LIKE_POST, {
         postId,

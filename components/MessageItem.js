@@ -16,7 +16,7 @@ const MessageItem = ({ item }) => {
       const userId = decodedToken.userId;
       console.log('items: ', item);
       const response = await fetch(
-        `http://192.168.212.104:3001/messages/${userId}/${item._id}`
+        `${REACT_APP_DEV_MODE}/messages/${userId}/${item._id}`
       );
       const data = await response.json();
 

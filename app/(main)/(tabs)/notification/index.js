@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { View, FlatList, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons,Feather } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
 import { socket } from '../../../../App';
 // import { socket } from '../../../App';
@@ -32,44 +32,55 @@ const index = () => {
     };
     return (
         <View style={styles.container}>
-          <FlatList
-            data={Array(20).fill(null)}
-            renderItem={() => (
-              <View style={styles.notificationContainer}>
-                <Image source={{uri: ''}} style={styles.avatar} />
-                <View style={styles.notificationInfo}>
-                  <Text style={styles.notificationText}>User Name commented on your post</Text>
-                  <Text style={styles.notificationTime}>2h</Text>
-                </View>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Notification</Text>
+          <TouchableOpacity onPress={handleSearch}>
+            <Ionicons name="search" size={24} color="#031c40" />
+          </TouchableOpacity>
         </View>
+        <FlatList
+          data={Array(10).fill(null)}
+          renderItem={({ item, index }) => (
+            <View style={styles.notificationContainer}>
+              <Image source={{ uri: 'https://i.pinimg.com/236x/c7/12/cb/c712cba6d251a67b9ef78f7d7c422b45.jpg' }} style={styles.avatar} />
+              <View style={styles.notificationInfo}>
+                <Text style={styles.notificationText}>
+                  <Text style={{fontWeight: "bold"}}>Username</Text>
+                  <Text> commented on your post</Text>  
+                </Text>
+                <Text style={styles.notificationTime}>2 hours ago</Text>
+              </View>
+              <Feather name="more-horizontal" size={24} color="#031c40" />
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
       );
     };
 
     const styles = StyleSheet.create({
         container: {
           flex: 1,
-          backgroundColor: '#fff',
-          padding: 10,
+          backgroundColor: '#E9EBEE',
         },
         header: {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: 10,
+          padding: 10,
+          backgroundColor: '#FFF',
         },
         headerText: {
           fontSize: 20,
           fontWeight: 'bold',
+          color: '#031c40',
         },
         notificationContainer: {
           flexDirection: 'row',
+          alignItems: 'center',
+          backgroundColor: '#FFF',
           padding: 10,
-          borderBottomWidth: 1,
-          borderBottomColor: '#ddd',
         },
         avatar: {
           width: 50,
@@ -79,13 +90,13 @@ const index = () => {
         },
         notificationInfo: {
           flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
         },
         notificationText: {
           fontSize: 16,
         },
         notificationTime: {
+          fontSize: 14,
           color: '#888',
         },
       });

@@ -44,11 +44,7 @@ const connections = () => {
   const fetchConnections = async () => {
     try {
       const response = await axios.get(
-<<<<<<< Updated upstream:app/(main)/(tabs)/network/connections.js
         `${REACT_APP_DEV_MODE}/connection/all/${userId}`
-=======
-        `http://192.168.212.104:3001/connections/${userId}`
->>>>>>> Stashed changes:app/(tabs)/network/connections.js
       );
       setConnections(response.data.connections);
     } catch (error) {

@@ -33,20 +33,7 @@ const DetailPost = () => {
   const [comment, onChangeComment] = React.useState("");
   const [showfullText, setShowfullText] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
   const navigation = useNavigation();
-=======
-
-  const fetchPost = useCallback(async () => {
-    try {
-      const response = await axios.get(`http://192.168.212.104:3001/posts/${slug}`);
-      console.log('reqq')
-      setPost(response.data);
-    } catch (error) {
-      console.log("error fetching user profile", error);
-    }
-  }, []);
->>>>>>> Stashed changes:app/(tabs)/post/[slug].js
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -77,9 +64,9 @@ const DetailPost = () => {
 
   const handleLikePost = async (postId) => {
     try {
-      console.log(`http://192.168.212.104:3001/posts/like/${postId}/${userId}`)
+      console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`)
       const response = await axios.post(
-        `http://192.168.212.104:3001/posts/like/${postId}/${userId}`
+        `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`
       );
       if (response.status === 200) {
         const updatedPost = response.data.post;
@@ -125,15 +112,9 @@ const DetailPost = () => {
       // socket.emit('push-comment', newComment);
       socket.emit('send-message', newComment);
       const response = await axios.post(
-<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
         `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
           ...newComment
         }
-=======
-        `http://192.168.212.104:3001/posts/comment/${slug}`, {
-        ...newComment
-      }
->>>>>>> Stashed changes:app/(tabs)/post/[slug].js
       );
       if (response.status === 200) {
         console.log('sucessful')
@@ -167,13 +148,17 @@ const DetailPost = () => {
   }, [])
 
   return (
-<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
     <SafeAreaView>
-      <View key={post?._id}>
+      <View key={post?._id}
+        style={{
+          backgroundColor: '#fff'
+        }}
+      >
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
+            
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginLeft:10 }}>
@@ -219,19 +204,6 @@ const DetailPost = () => {
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </Pressable>
             
-=======
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFF' }}>
-    {/* <ScrollView> */}
-      <View key={post?._id} style={{ backgroundColor: 'white', margin: 5, borderRadius: 10, padding: 10 }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Image
-            style={{ width: 50, height: 50, borderRadius: 25 }}
-            source={{ uri: post?.user?.profileImage || 'https://via.placeholder.com/50' }}
-          />
-          <View style={{ flex: 1, marginLeft: 10 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>{post?.user?.name}</Text>
-            <Text style={{ color: "gray", fontSize: 14 }}>{moment(post?.createdAt).fromNow()}</Text>
->>>>>>> Stashed changes:app/(tabs)/post/[slug].js
           </View>
           <Pressable style={{ marginRight: 10 }}>
             <Entypo name="dots-three-horizontal" size={20} color="gray" />
@@ -243,13 +215,8 @@ const DetailPost = () => {
         </Text>
         {post?.imageUrl && (
           <Image
-<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
-            style={{ width: "100%", height: 240 }}
-            source={{ uri: post?.imageUrl || null}}
-=======
             style={{ width: "100%", height: 200, borderRadius: 10, marginTop: 10 }}
             source={{ uri: post?.imageUrl }}
->>>>>>> Stashed changes:app/(tabs)/post/[slug].js
           />
         )}
 
@@ -258,8 +225,7 @@ const DetailPost = () => {
           <Text style={{ color: "gray" }}>{post?.comments?.length} Comments</Text>
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
-<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
+        <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10,  }}>
           <Pressable 
             onPress={() => handleLikePost(post?._id)}
             style={{flexDirection: 'row', alignItems: 'center'}}
@@ -299,6 +265,7 @@ const DetailPost = () => {
               borderWidth: 1,
               borderColor: '#D2D7D3',
               marginHorizontal: 5,
+              paddingRight: 15
             }}
           >
             <TextInput
@@ -308,7 +275,10 @@ const DetailPost = () => {
                 color: "gray",
                 marginLeft: 20,
                 marginVertical: 10,
-                width: 310,                
+                width: '99%',   
+                height: 22, 
+                paddingLeft: 20,
+                           
               }}
               placeholder="Comment"
               
@@ -324,6 +294,7 @@ const DetailPost = () => {
           </View>
         </View>
         <FlatList
+          style={{backgroundColor: '#fff'}}
           data={post?.comments}
           renderItem={({ item }) => (
             <View 
@@ -340,7 +311,7 @@ const DetailPost = () => {
                 style={{ 
                   marginLeft: 10,
                   padding: 10,
-                  backgroundColor: '#E0E0E0',
+                  backgroundColor: '#DCDCDC',
                   borderRadius: 10,
                   marginBottom: 5,
                   
@@ -363,56 +334,6 @@ const DetailPost = () => {
           )}
         />
     </SafeAreaView>
-=======
-          <Pressable onPress={() => handleLikePost(item?._id)} style={{ alignItems: 'center' }}>
-            <AntDesign name="like2" size={24} color={isLiked ? "#2078F4" : "#616771"} />
-            <Text style={{ fontSize: 14, color: isLiked ? "#2078F4" : "#616771" }}>Like</Text>
-          </Pressable>
-          <Pressable onPress={() => handleComment(post?._id)} style={{ alignItems: 'center' }}>
-            <FontAwesome name="comment-o" size={20} color="#616771" />
-            <Text style={{ fontSize: 14, color: '#616771' }}>Comment</Text>
-          </Pressable>
-          <Pressable style={{ alignItems: 'center' }}>
-            <AntDesign name="sharealt" size={23} color="#616771" />
-            <Text style={{ fontSize: 14, color: "#616771" }}>Share</Text>
-          </Pressable>
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderColor: '#E0E0E0', paddingVertical: 10 }}>
-          <Image
-            style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 5 }}
-            source={{ uri: 'https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg' }}
-          />
-          <TextInput
-            value={comment}
-            onChangeText={onChangeComment}
-            placeholder="Write a comment..."
-            style={{ flex: 1, marginLeft: 10, marginRight: 10, padding: 10, backgroundColor: '#f0f2f5', borderRadius: 20 }}
-          />
-          <Pressable onPress={handleComment}>
-            <FontAwesome name="send" size={20} color="#2078F4" />
-          </Pressable>
-        </View>
-      </View>
-      <FlatList
-        data={post?.comments}
-        renderItem={({ item }) => (
-          <View style={{ flexDirection: "row", padding: 10, alignItems: "center", backgroundColor: 'white', margin: 5, borderRadius: 10 }}>
-            <Image
-              style={{ width: 40, height: 40, borderRadius: 20 }}
-              source={{ uri: item?.user?.profileImage || 'https://via.placeholder.com/40' }}
-            />
-            <View style={{ marginLeft: 10, padding: 10, backgroundColor: '#f0f2f5', borderRadius: 15, flex: 1 }}>
-              <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
-              <Text>{item?.text}</Text>
-            </View>
-          </View>
-        )}
-        keyExtractor={item => item._id}
-      />
-    {/* </ScrollView> */}
-  </SafeAreaView>
->>>>>>> Stashed changes:app/(tabs)/post/[slug].js
   );
 };
 export default DetailPost;

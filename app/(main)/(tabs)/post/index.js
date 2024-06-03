@@ -58,11 +58,7 @@ const index = () => {
       };
 
       const response = await axios.post(
-<<<<<<< Updated upstream:app/(main)/(tabs)/post/index.js
         `${REACT_APP_DEV_MODE}/create`,
-=======
-        `http://192.168.212.104:3001/posts/create`,
->>>>>>> Stashed changes:app/(tabs)/post/index.js
         postData
       );
 
