@@ -52,8 +52,13 @@ const login = () => {
           email: email,
           password: password
       }
+<<<<<<< Updated upstream
       console.log('user: ', user);
       axios.post(`${REACT_APP_DEV_MODE}/login`, user).then((response) => {
+=======
+      // console.log('user: ', user);
+      axios.post(`http://192.168.212.104:3001/login`, user).then((response) => {
+>>>>>>> Stashed changes
           console.log(response);
           const token = response.data.token;
           const tokenStream = response.data.tokenStream;

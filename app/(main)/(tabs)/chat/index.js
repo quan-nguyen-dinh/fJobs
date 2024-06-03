@@ -26,7 +26,7 @@ function index() {
     const userId = decodedToken.userId;
     console.log('userId: ', userId);
     try {
-      const res = await axios.get(`${REACT_APP_DEV_MODE}/connection/all/${userId}`);
+      const res = await axios.get(`http://192.168.212.104:3001/connection/all/${userId}`);
       console.log('data: ', res.data);
       setFriends(res.data?.connections);
     }catch(err) {

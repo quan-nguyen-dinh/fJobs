@@ -33,7 +33,20 @@ const DetailPost = () => {
   const [comment, onChangeComment] = React.useState("");
   const [showfullText, setShowfullText] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
   const navigation = useNavigation();
+=======
+
+  const fetchPost = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://192.168.212.104:3001/posts/${slug}`);
+      console.log('reqq')
+      setPost(response.data);
+    } catch (error) {
+      console.log("error fetching user profile", error);
+    }
+  }, []);
+>>>>>>> Stashed changes:app/(tabs)/post/[slug].js
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -64,12 +77,33 @@ const DetailPost = () => {
 
   const handleLikePost = async (postId) => {
     try {
+      console.log(`http://192.168.212.104:3001/posts/like/${postId}/${userId}`)
       const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/like/${postId}/${userId}`
+        `http://192.168.212.104:3001/posts/like/${postId}/${userId}`
       );
       if (response.status === 200) {
         const updatedPost = response.data.post;
-        setIsLiked(updatedPost.likes.some((like) => like.user === userId));
+        console.log(updatedPost, ' updatePost: ');
+        if (updatedPost) {
+          console.log(updatedPost.id, 'LIKE: ', updatedPost.likes?.length);
+        }
+        console.log('posts', posts);
+        setPosts(prevPosts => {
+          const newPosts = [...prevPosts];
+          newPosts.forEach(post => {
+            if (post._id === updatedPost._id) {
+              console.log('LIKE: ', post.likes?.length, 'UPDATE POST: ', updatedPost.likes?.length);
+              post.likes = updatedPost.likes;
+              //post = updatePost not update likes properties of the post
+              console.log(post._id, ' LIKE: ', post.likes?.length,);
+            }
+          });
+          newPosts.forEach(post => {
+            console.log('POST: ', post._id, post.likes?.length);
+          })
+          return newPosts;
+        })
+        // setIsLiked(updatedPost.likes.some((like) => like.user === userId));
       }
     } catch (error) {
       console.log("Error liking/unliking the post", error);
@@ -91,9 +125,15 @@ const DetailPost = () => {
       // socket.emit('push-comment', newComment);
       socket.emit('send-message', newComment);
       const response = await axios.post(
+<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
         `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
           ...newComment
         }
+=======
+        `http://192.168.212.104:3001/posts/comment/${slug}`, {
+        ...newComment
+      }
+>>>>>>> Stashed changes:app/(tabs)/post/[slug].js
       );
       if (response.status === 200) {
         console.log('sucessful')
@@ -127,6 +167,7 @@ const DetailPost = () => {
   }, [])
 
   return (
+<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
     <SafeAreaView>
       <View key={post?._id}>
         <View
@@ -178,68 +219,47 @@ const DetailPost = () => {
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </Pressable>
             
+=======
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFF' }}>
+    {/* <ScrollView> */}
+      <View key={post?._id} style={{ backgroundColor: 'white', margin: 5, borderRadius: 10, padding: 10 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <Image
+            style={{ width: 50, height: 50, borderRadius: 25 }}
+            source={{ uri: post?.user?.profileImage || 'https://via.placeholder.com/50' }}
+          />
+          <View style={{ flex: 1, marginLeft: 10 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>{post?.user?.name}</Text>
+            <Text style={{ color: "gray", fontSize: 14 }}>{moment(post?.createdAt).fromNow()}</Text>
+>>>>>>> Stashed changes:app/(tabs)/post/[slug].js
           </View>
+          <Pressable style={{ marginRight: 10 }}>
+            <Entypo name="dots-three-horizontal" size={20} color="gray" />
+          </Pressable>
         </View>
 
-        <View style={{ marginHorizontal: 10, marginTop: 10 }}>
-          <Text style={{ fontSize: 16, lineHeight: 24 }}>
-            {post?.description}
-          </Text>
-          {showfullText ? (
-            <Pressable onPress={toggleShowFullText}>
-              <Text style={{ color: "blue" }}>See Less</Text>
-            </Pressable>
-          ) : (
-            <Pressable onPress={toggleShowFullText}>
-              <Text style={{ color: "blue" }}>See More</Text>
-            </Pressable>
-          )}
-        </View>
-
-        {/* <View style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 12 }}>
-          <Text
-            style={{ fontSize: 15 }}
-            numberOfLines={showfullText ? undefined : MAX_LINES}
-          >
-            {post?.description}
-          </Text>
-          {!showfullText && (
-            <Pressable onPress={toggleShowFullText}>
-              <Text>See more</Text>
-            </Pressable>
-          )}
-        </View> */}
-
+        <Text style={{ fontSize: 16, lineHeight: 24, marginTop: 10 }}>
+          {post?.description}
+        </Text>
         {post?.imageUrl && (
           <Image
+<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
             style={{ width: "100%", height: 240 }}
             source={{ uri: post?.imageUrl || null}}
+=======
+            style={{ width: "100%", height: 200, borderRadius: 10, marginTop: 10 }}
+            source={{ uri: post?.imageUrl }}
+>>>>>>> Stashed changes:app/(tabs)/post/[slug].js
           />
         )}
 
-        {post?.likes?.length > 0 && (
-          <View
-            style={{
-              padding: 10,
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <SimpleLineIcons name="like" size={16} color="#0072b1" />
-            <Text style={{ color: "gray" }}>{post?.likes?.length}</Text>
-          </View>
-        )}
-
-        <View
-          style={{
-            height: 0.5,
-            borderColor: "#E0E0E0",
-            borderWidth: 0.5,
-          }}
-        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+          <Text style={{ color: "gray" }}>{post?.likes?.length} Likes</Text>
+          <Text style={{ color: "gray" }}>{post?.comments?.length} Comments</Text>
+        </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
+<<<<<<< Updated upstream:app/(main)/(tabs)/post/[slug].js
           <Pressable 
             onPress={() => handleLikePost(post?._id)}
             style={{flexDirection: 'row', alignItems: 'center'}}
@@ -343,6 +363,56 @@ const DetailPost = () => {
           )}
         />
     </SafeAreaView>
+=======
+          <Pressable onPress={() => handleLikePost(item?._id)} style={{ alignItems: 'center' }}>
+            <AntDesign name="like2" size={24} color={isLiked ? "#2078F4" : "#616771"} />
+            <Text style={{ fontSize: 14, color: isLiked ? "#2078F4" : "#616771" }}>Like</Text>
+          </Pressable>
+          <Pressable onPress={() => handleComment(post?._id)} style={{ alignItems: 'center' }}>
+            <FontAwesome name="comment-o" size={20} color="#616771" />
+            <Text style={{ fontSize: 14, color: '#616771' }}>Comment</Text>
+          </Pressable>
+          <Pressable style={{ alignItems: 'center' }}>
+            <AntDesign name="sharealt" size={23} color="#616771" />
+            <Text style={{ fontSize: 14, color: "#616771" }}>Share</Text>
+          </Pressable>
+        </View>
+
+        <View style={{ flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderColor: '#E0E0E0', paddingVertical: 10 }}>
+          <Image
+            style={{ width: 40, height: 40, borderRadius: 20, marginLeft: 5 }}
+            source={{ uri: 'https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg' }}
+          />
+          <TextInput
+            value={comment}
+            onChangeText={onChangeComment}
+            placeholder="Write a comment..."
+            style={{ flex: 1, marginLeft: 10, marginRight: 10, padding: 10, backgroundColor: '#f0f2f5', borderRadius: 20 }}
+          />
+          <Pressable onPress={handleComment}>
+            <FontAwesome name="send" size={20} color="#2078F4" />
+          </Pressable>
+        </View>
+      </View>
+      <FlatList
+        data={post?.comments}
+        renderItem={({ item }) => (
+          <View style={{ flexDirection: "row", padding: 10, alignItems: "center", backgroundColor: 'white', margin: 5, borderRadius: 10 }}>
+            <Image
+              style={{ width: 40, height: 40, borderRadius: 20 }}
+              source={{ uri: item?.user?.profileImage || 'https://via.placeholder.com/40' }}
+            />
+            <View style={{ marginLeft: 10, padding: 10, backgroundColor: '#f0f2f5', borderRadius: 15, flex: 1 }}>
+              <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
+              <Text>{item?.text}</Text>
+            </View>
+          </View>
+        )}
+        keyExtractor={item => item._id}
+      />
+    {/* </ScrollView> */}
+  </SafeAreaView>
+>>>>>>> Stashed changes:app/(tabs)/post/[slug].js
   );
 };
 export default DetailPost;

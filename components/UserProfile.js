@@ -13,8 +13,12 @@ const UserProfile = ({ item, userId }) => {
   const [connectionSent, setConnectionSent] = useState(false);
   const sendConnectionRequest = async (currentUserId, selectedUserId) => {
     try {
+<<<<<<< Updated upstream
       console.log('send-request');
       const response = await fetch(`${REACT_APP_DEV_MODE}/connection/request`, {
+=======
+      const response = await fetch(`http://192.168.212.104:3001/connection-request`, {
+>>>>>>> Stashed changes
         method: "POST",
         headers: {
           "Content-Type": "application/json",

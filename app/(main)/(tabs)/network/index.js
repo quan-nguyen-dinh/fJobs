@@ -38,7 +38,7 @@ const index = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
-        `${REACT_APP_DEV_MODE}/profile/${userId}`
+        `http://192.168.212.104:3001/profile/${userId}`
       );
       const userData = response.data.user;
       setUser(userData);
@@ -55,7 +55,7 @@ const index = () => {
 
   const fetchUsers = async () => {
     axios
-      .get(`${REACT_APP_DEV_MODE}/users/${userId}`)
+      .get(`http://192.168.212.104:3001/users/${userId}`)
       .then((response) => {
         console.log("response: ", response.data);
         setUsers(response.data);
@@ -73,7 +73,11 @@ const index = () => {
   const fetchFriendRequests = async () => {
     try {
       const response = await axios.get(
+<<<<<<< Updated upstream:app/(main)/(tabs)/network/index.js
         `${REACT_APP_DEV_MODE}/connection/request/${userId}`
+=======
+        `http://192.168.212.104:3001/connection-request/${userId}`
+>>>>>>> Stashed changes:app/(tabs)/network/index.js
       );
       if (response.status === 200) {
         const connectionRequestsData = response.data?.map((friendRequest) => ({

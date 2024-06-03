@@ -46,7 +46,7 @@ const profile = () => {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
-        `${REACT_APP_DEV_MODE}/profile/${userId}`
+        `http://192.168.212.104:3001/profile/${userId}`
       );
       const userData = response.data.user;
       setUser(userData);
@@ -58,7 +58,7 @@ const profile = () => {
   const handleSaveDescription = async () => {
     try {
       const response = await axios.put(
-        `${REACT_APP_DEV_MODE}/profile/${userId}`,
+        `http://192.168.212.104:3001/profile/${userId}`,
         {
           userDescription,
         }
