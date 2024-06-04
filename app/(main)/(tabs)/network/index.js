@@ -69,7 +69,7 @@ const index = () => {
       fetchFriendRequests();
     }
   }, [userId]);
-  console.log('RE-RENDER NETWORK')
+  console.log("RE-RENDER NETWORK");
   const fetchFriendRequests = async () => {
     try {
       const response = await axios.get(
@@ -90,7 +90,7 @@ const index = () => {
     }
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <View>
       <Pressable
         onPress={() => router.push("/network/connections")}
         style={{
@@ -172,7 +172,7 @@ const index = () => {
           <UserProfile userId={userId} item={item} key={index} />
         )}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

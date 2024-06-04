@@ -8,11 +8,13 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
+  Modal,
 } from "react-native";
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition, useCallback, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import axios from "axios";
+import { StatusBar } from "expo-status-bar";
 import {
   Ionicons,
   Entypo,
@@ -36,6 +38,7 @@ import { socket } from "../../../../App";
 import { SearchBar } from "react-native-screens";
 import transalations from "../../../../transalations";
 import { LIKE_POST } from "../../../../constants/event";
+import ReactionBox from "../../../../components/reactions";
 
 const i18n = new I18n(transalations);
 // i18n.enableFallback = true;
@@ -45,6 +48,7 @@ const index = () => {
   const [userId, setUserId] = useState("");
   const [user, setUser] = useState();
   const [posts, setPosts] = useState([]);
+  const [reactionType, setReactionType] = useState("like");
   const a = useTransition();
   useEffect(() => {
     socket.emit("HOME", 'WE"RE AT HOME');
@@ -91,15 +95,18 @@ const index = () => {
     setShowfullText(!showfullText);
   };
   const [isLiked, setIsLiked] = useState(false);
-  const handleLikePost = async (postId) => {
+  const handleLikePost = async (postId, _reactionType = "like") => {
     try {
       console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`);
       const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`
+        `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`,
+        {
+          reactionType: _reactionType,
+        }
       );
       socket.emit(LIKE_POST, {
         postId,
-        userId
+        userId,
       });
       if (response.status === 200) {
         const updatedPost = response.data.post;
@@ -141,17 +148,115 @@ const index = () => {
   };
   const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
-  return (
-    <SafeAreaView style={{ backgroundColor: "white" }}>
+  const RenderMostReaction = ({ item }) => {
+    if (!item?.likes.length) {
+      return <></>;
+    }
+    console.log("item 1: ", item.likes);
+    const reaction = item?.likes?.reduce(
+      (reaction, current) => {
+        const { reactionType } = current;
+        console.log("[current?.reactionType]: ", reactionType);
+        return {
+          ...reaction,
+          [reactionType]: reaction[reactionType] + 1,
+        };
+      },
+      {
+        like: 0,
+        haha: 0,
+        love: 0,
+        care: 0,
+        wow: 0,
+        sad: 0,
+        angry: 0,
+      }
+    );
+    const sortedData = Array.from(Object.entries(reaction)).sort(
+      (a, b) => b[1] - a[1]
+    );
+
+    // Bước 3: Chuyển đổi mảng đã sắp xếp trở lại thành một object
+    const sortedReaction = Object.fromEntries(sortedData);
+    // const threeMostReaction = sor
+    console.log(sortedReaction);
+
+    // const sortedReaction = reaction?.sort();
+    console.log("reaction: ", reaction);
+    // console.log('aftersort: ', objectSorter(reaction))
+
+    return (
       <View
         style={{
+          padding: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 6,
+        }}
+      >
+        <SimpleLineIcons name="like" size={16} color="#0072b1" />
+        <Text style={{ color: "black" }}>{item?.likes?.length}</Text>
+      </View>
+    );
+  };
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const postId = useRef();
+  const handleOpenModal = useCallback((_postId) => {
+    console.log('postId: ', _postId);
+    postId.current = _postId;
+    setIsModalVisible(true);
+  }, [isModalVisible]);
+  const handleCloseModal = useCallback(() => {
+    setIsModalVisible(false);
+  }, [isModalVisible]);
+  const handleIgnorePost = useCallback(async ()=>{
+    const token = await AsyncStorage.getItem("authToken");
+    const decodedToken = jwt_decode(token);
+    const userId = decodedToken.userId;
+    console.log(userId, '-------------------------------------------POST ID: ', postId.current);
+    try {
+      console.log(`${REACT_APP_DEV_MODE}/posts/ignore/${postId.current}/${userId}`);
+      const response = await axios.post(`${REACT_APP_DEV_MODE}/posts/ignore/${postId.current}/${userId}`);
+      if (response.status === 200) {
+        const updatedPost = response.data.post;
+        console.log(updatedPost, " updatePost: ");
+        if (updatedPost) {
+          console.log(updatedPost.id, "LIKE: ", updatedPost.ignorances?.length);
+        }
+        console.log("posts", posts);
+        setPosts((prevPosts) => {
+          const newPosts = [...prevPosts];
+          console.log('NEWPOST --------------------: ',newPosts.length);
+          const filterPost = newPosts.filter(post=>
+          {
+            if(post.ignorances.length === 0) return post;
+            else {
+              if(!post.ignorances.includes(userId)) {
+                return post;
+              }
+              return false;
+            }
+          }
+          );
+          console.log('newPostLen: ', filterPost.length);
+          return filterPost;
+        })
+      }
+    }catch(err) {
+      console.log('ERR: ', err);
+    };
+  }, [])
+  return (
+    <SafeAreaView style={[{ backgroundColor: "white" }]}>
+      <View
+        style={[{
           padding: 10,
           flexDirection: "row",
           alignItems: "center",
           gap: 4,
           borderBottomWidth: 0.5,
           borderBottomColor: "gray",
-        }}
+        }, isModalVisible && { backgroundColor: 'rgba(0,0,0,0.7)'}]}
       >
         <View
           style={{
@@ -203,7 +308,6 @@ const index = () => {
 
         <Ionicons name="chatbox-ellipses-outline" size={24} color="#1877F2" />
       </View>
-
       <FlatList
         data={posts}
         renderItem={({ item }) => (
@@ -255,8 +359,10 @@ const index = () => {
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
-                <Feather name="more-horizontal" size={24} color="black" />
-                <Ionicons name="close" size={24} color="black" />
+                <Pressable onPress={()=>handleOpenModal(item._id)}>
+                  <Feather name="more-horizontal" size={24} color="black" />
+                  <Ionicons name="close" size={24} color="black" />
+                </Pressable>
               </View>
             </View>
 
@@ -282,7 +388,7 @@ const index = () => {
                 source={{ uri: item?.imageUrl }}
               />
             )}
-
+            <RenderMostReaction item={item} />
             {item?.likes?.length > 0 && (
               <View
                 style={{
@@ -308,32 +414,15 @@ const index = () => {
                 borderTopColor: "gray",
               }}
             >
-              <Pressable
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={() => handleLikePost(item?._id)}
-              >
-                <AntDesign
-                  style={{ textAlign: "center" }}
-                  name="like2"
-                  size={24}
-                  color={item?.likes?.length > 0 ? "#0072b1" : "gray"}
-                />
-                <Text> </Text>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    fontSize: 12,
-                    color: item?.likes?.length > 0 ? "#0072b1" : "gray",
-                    marginTop: 2,
-                  }}
-                >
-                  Like
-                </Text>
-              </Pressable>
+              <ReactionBox
+                reactionType={
+                  item?.likes?.find((item) => item?.user === userId)
+                    ?.reactionType
+                }
+                pressLike={(_reactionType) =>
+                  handleLikePost(item?._id, _reactionType)
+                }
+              />
               <Pressable
                 style={{ flexDirection: "row", alignItems: "center" }}
                 onPress={() => handleComment(item?._id)}
@@ -405,10 +494,101 @@ const index = () => {
           </View>
         )}
       />
+      <Modal
+        style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+        animationType="slide"
+        backdropColor={'green'}
+        backdropOpacity= {1}
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={handleCloseModal}
+        overlayColor={'black'}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Do you want hide that post?</Text>
+            <View style={styles.wrapperBtn}>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={handleCloseModal}
+              >
+                <Text style={styles.textStyle}>Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonOk]}
+                onPress={handleIgnorePost}
+              >
+                <Text style={styles.titleSubmit}>Yes</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
 
 export default index;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    marginTop: 150,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  wrapperBtn: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  buttonClose: {
+    backgroundColor: "#fff",
+    color: "#333",
+  },
+  buttonOk: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "#333",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  titleSubmit: {
+    color: '#fff'
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+});

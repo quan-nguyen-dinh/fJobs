@@ -15,7 +15,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { REACT_APP_DEV_MODE } from "@env";
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import moment from "moment";
-import { Ionicons, Entypo, Feather, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Ionicons,
+  Entypo,
+  Feather,
+  FontAwesome,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -46,7 +52,7 @@ const DetailPost = () => {
     };
     fetchPost();
   }, [slug]);
- 
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = await AsyncStorage.getItem("authToken");
@@ -102,22 +108,23 @@ const DetailPost = () => {
       const newComment = {
         content: comment,
         userId: userId,
-      }
-      console.log(newComment, 'date: ', Date.now);
+      };
+      console.log(newComment, "date: ", Date.now);
       // const response = await axios.post(
       //   `192.168.1.15:3001/posts/comment/${slug}`,{
       //     ...newComment
       //   }
       // );
       // socket.emit('push-comment', newComment);
-      socket.emit('send-message', newComment);
+      socket.emit("send-message", newComment);
       const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,{
-          ...newComment
+        `${REACT_APP_DEV_MODE}/posts/comment/${slug}`,
+        {
+          ...newComment,
         }
       );
       if (response.status === 200) {
-        console.log('sucessful')
+        console.log("sucessful");
         fetchPost();
         // setPost(prevPost=>{
         //   const post = {...prevPost};
@@ -130,30 +137,31 @@ const DetailPost = () => {
     }
   };
 
-  useLayoutEffect(()=>{
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
       headerLeft: () => (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-            <Ionicons
+          <Ionicons
             onPress={() => navigation.goBack()}
             name="arrow-back"
             size={24}
             color="black"
           />
-          <Text style={{ fontSize: 20, fontWeight: "500" }}>Bài viết của {post?.user?.name}</Text>
+          <Text style={{ fontSize: 20, fontWeight: "500" }}>
+            Bài viết của {post?.user?.name}
+          </Text>
         </View>
-      )
-    })
-  }, [])
+      ),
+    });
+  }, [post]);
 
   return (
-    <SafeAreaView>
-      <View key={post?._id}
-        style={{
-          backgroundColor: '#fff'
-        }}
-      >
+    <View style={{
+      marginTop: 10,
+      backgroundColor: '#fff'
+    }}>
+      <View key={post?._id}>
         <View
           style={{
             flexDirection: "row",
@@ -161,7 +169,14 @@ const DetailPost = () => {
             
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginLeft:10 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 10,
+              marginLeft: 10,
+            }}
+          >
             <Image
               style={{ width: 60, height: 60, borderRadius: 30 }}
               source={{ uri: post?.user?.profileImage || null }}
@@ -188,22 +203,29 @@ const DetailPost = () => {
               </Text>
             </View>
           </View>
-          
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <View style={{ flex: 1, marginLeft: 10 }}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>{post?.user?.name}</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                {post?.user?.name}
+              </Text>
               <Text style={{ color: "gray", fontSize: 14 }}>
                 {moment(post?.createdAt).format("MMMM Do, YYYY")}
               </Text>
             </View>
             <Pressable
               style={{
-                marginRight: 10
+                marginRight: 10,
               }}
             >
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </Pressable>
-            
           </View>
           <Pressable style={{ marginRight: 10 }}>
             <Entypo name="dots-three-horizontal" size={20} color="gray" />
@@ -225,10 +247,24 @@ const DetailPost = () => {
           <Text style={{ color: "gray" }}>{post?.comments?.length} Comments</Text>
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10,  }}>
-          <Pressable 
+        <View
+          style={{
+            height: 0.5,
+            borderColor: "#E0E0E0",
+            borderWidth: 0.5,
+          }}
+        />
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            paddingVertical: 10,
+          }}
+        >
+          <Pressable
             onPress={() => handleLikePost(post?._id)}
-            style={{flexDirection: 'row', alignItems: 'center'}}
+            style={{ flexDirection: "row", alignItems: "center" }}
           >
             <AntDesign
               style={{ textAlign: "center" }}
@@ -236,104 +272,113 @@ const DetailPost = () => {
               size={24}
               color={isLiked ? "#0072b1" : "gray"}
             />
-            <Text style={{ marginLeft: 4, fontSize: 14, color: isLiked ? "#2078F4" : "gray" }}>Like</Text>
+            <Text
+              style={{
+                marginLeft: 4,
+                fontSize: 14,
+                color: isLiked ? "#2078F4" : "gray",
+              }}
+            >
+              Like
+            </Text>
           </Pressable>
-          <Pressable style={{flexDirection: 'row', alignItems: 'center'}} onPress={() => handleComment(post?._id)}>
+          <Pressable
+            style={{ flexDirection: "row", alignItems: "center" }}
+            onPress={() => handleComment(post?._id)}
+          >
             <FontAwesome
               name="comment-o"
               size={20}
               style={{ textAlign: "center", color: "gray" }}
             />
-            <Text style={{ marginLeft: 4, fontSize: 14, color:'gray' }}>Comment</Text>
+            <Text style={{ marginLeft: 4, fontSize: 14, color: "gray" }}>
+              Comment
+            </Text>
           </Pressable>
-          <Pressable style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
             <AntDesign name="sharealt" size={23} color="gray" />
-            <Text style={{ marginLeft: 4, fontSize: 14, color: "gray" }}>Share</Text>
+            <Text style={{ marginLeft: 4, fontSize: 14, color: "gray" }}>
+              Share
+            </Text>
           </Pressable>
         </View>
 
-          <View
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            gap: 5,
+            backgroundColor: "white",
+            paddingVertical: 5,
+            borderRadius: 25,
+            marginTop: 10,
+            borderWidth: 1,
+            borderColor: "#D2D7D3",
+            marginHorizontal: 5,
+          }}
+        >
+          <TextInput
+            value={comment}
+            onChangeText={onChangeComment}
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              alignItems:'center',              
-              gap: 5,
-              backgroundColor: "white",
-              paddingVertical: 5,
-              borderRadius: 25,
-              marginTop: 10,
-              borderWidth: 1,
-              borderColor: '#D2D7D3',
-              marginHorizontal: 5,
-              paddingRight: 15
+              color: "gray",
+              marginLeft: 20,
+              marginVertical: 10,
+              width: 310,
+            }}
+            placeholder="Comment"
+          />
+          <Pressable
+            onPress={handleComment}
+            style={{
+              marginRight: 20,
             }}
           >
-            <TextInput
-              value={comment}
-              onChangeText={onChangeComment}
-              style={{
-                color: "gray",
-                marginLeft: 20,
-                marginVertical: 10,
-                width: '99%',   
-                height: 22, 
-                paddingLeft: 20,
-                           
-              }}
-              placeholder="Comment"
-              
-            />
-            <Pressable
-              onPress={handleComment}
-                style={{   
-                  marginRight: 20   
-                }}
-            >
-              <FontAwesome name="send" size={20} color="blue" />
-            </Pressable>
-          </View>
+            <FontAwesome name="send" size={20} color="blue" />
+          </Pressable>
         </View>
-        <FlatList
-          style={{backgroundColor: '#fff'}}
-          data={post?.comments}
-          renderItem={({ item }) => (
-            <View 
-              style={{ 
-                flexDirection: "row", 
-                padding: 10, 
-                alignItems: "center", 
-            }}>
-              <Image
-                style={{ width: 40, height: 40, borderRadius: 20 }}
-                source={{ uri: item?.user?.profileImage || null}}
-              />
-              <View 
-                style={{ 
-                  marginLeft: 10,
-                  padding: 10,
-                  backgroundColor: '#DCDCDC',
-                  borderRadius: 10,
-                  marginBottom: 5,
-                  
-              }}>
-                <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
-                <Text>{item?.text}</Text>
-              </View>
-            </View>
-          )}
-          keyExtractor={item => item._id}
-          ListFooterComponent={() => (
+      </View>
+      <FlatList
+        data={post?.comments}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              flexDirection: "row",
+              padding: 10,
+              alignItems: "center",
+            }}
+          >
+            <Image
+              style={{ width: 40, height: 40, borderRadius: 20 }}
+              source={{ uri: item?.user?.profileImage || null }}
+            />
             <View
               style={{
-                paddingVertical: 20,
-                borderTopWidth: 1,
-                borderColor: "#CED0CE",
+                marginLeft: 10,
+                padding: 10,
+                backgroundColor: "#E0E0E0",
+                borderRadius: 10,
+                marginBottom: 5,
               }}
             >
+              <Text style={{ fontWeight: "bold" }}>{item?.user?.name}</Text>
+              <Text>{item?.text}</Text>
             </View>
-          )}
-        />
-    </SafeAreaView>
+          </View>
+        )}
+        keyExtractor={(item) => item._id}
+        ListFooterComponent={() => (
+          <View
+            style={{
+              paddingVertical: 20,
+              borderTopWidth: 1,
+              borderColor: "#CED0CE",
+            }}
+          ></View>
+        )}
+      />
+    </View>
   );
 };
 export default DetailPost;
