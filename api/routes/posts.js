@@ -7,5 +7,7 @@ router.get('/all', PostController.show);
 router.get('/:postId', PostController.detail);
 router.post('/like/:postId/:userId', PostController.like);
 router.get('/comments/:postId', PostController.comments);
-router.post('/comment/:slug', PostController.updateComment)
+router.post('/comment/:slug', PostController.updateComment);
+router.post('/ignore/:postId/:userId', PostController.ignore);
+
 module.exports = router;

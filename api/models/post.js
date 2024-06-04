@@ -13,7 +13,8 @@ const postSchema = new mongoose.Schema({
             user:{
                 type:mongoose.Schema.Types.ObjectId,
                 ref:"User",
-            }
+            },
+            reactionType: String 
         }
     ],
     comments:[
@@ -26,6 +27,14 @@ const postSchema = new mongoose.Schema({
             createdAt:{
                 type:Date,
                 default:Date.now
+            }
+        }
+    ],
+    ignorances: [
+        {
+            user:{
+                type:mongoose.Schema.Types.ObjectId,
+                ref:"User",
             }
         }
     ],
