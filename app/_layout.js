@@ -10,8 +10,8 @@ import { Slot, router } from "expo-router";
 import { Text, View } from "react-native";
 import { Provider } from "react-redux";
 import { store } from "../store";
-import { useEffect } from 'react';
-import { PermissionsAndroid, Platform } from 'react-native';
+import { useEffect } from "react";
+import { PermissionsAndroid, Platform } from "react-native";
 import { OverlayContext, OverlayProvider } from "stream-chat-expo";
 import { socket } from "../App";
 import { INCOMMING_CALL } from "../constants/event";
@@ -19,35 +19,35 @@ import { INCOMMING_CALL } from "../constants/event";
 export default function RootLayoutNav() {
   useEffect(() => {
     const run = async () => {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         await PermissionsAndroid.requestMultiple([
-          'android.permission.POST_NOTIFICATIONS',
-          'android.permission.BLUETOOTH_CONNECT',
+          "android.permission.POST_NOTIFICATIONS",
+          "android.permission.BLUETOOTH_CONNECT",
         ]);
       }
     };
     run();
 
     const handleIncomingCall = async (data) => {
-      if(data.userId) {
+      if (data.userId) {
         router.replace(`/(main)/(call)/${data?.callId}`);
       }
-    }
+    };
     socket.on(INCOMMING_CALL, handleIncomingCall);
     return () => {
-      socket.off(INCOMMING_CALL, handleIncomingCall)
-    }
+      socket.off(INCOMMING_CALL, handleIncomingCall);
+    };
   }, []);
-  
+
   return (
-    <Provider store={store}>
-      <OverlayProvider>
-        <ThemeProvider value={DefaultTheme}>
-          <SafeAreaProvider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <OverlayProvider>
+          <ThemeProvider value={DefaultTheme}>
             <Slot />
-          </SafeAreaProvider>
-        </ThemeProvider>
-      </OverlayProvider>
-    </Provider>
+          </ThemeProvider>
+        </OverlayProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 }

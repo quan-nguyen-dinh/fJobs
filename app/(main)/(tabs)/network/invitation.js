@@ -56,7 +56,7 @@ const invitation = () => {
   };
 
   return (
-    <SafeAreaView>
+    <View>
       <View
         style={{
           flexDirection: "row",
@@ -98,7 +98,7 @@ const invitation = () => {
           )}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

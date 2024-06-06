@@ -28,6 +28,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import { socket } from "../../../../App";
 import { ActivityIndicator } from "react-native-web";
+import MostReaction from "../../../../components/MostReaction";
+import ReactionBox from "../../../../components/reactions";
 
 const MAX_LINES = 2;
 
@@ -68,34 +70,46 @@ const DetailPost = () => {
     setShowfullText(!showfullText);
   };
 
-  const handleLikePost = async (postId) => {
+  const handleLikePost = async (postId, _reactionType = "like") => {
     try {
-      console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`)
+      console.log(`${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`);
       const response = await axios.post(
-        `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`
+        `${REACT_APP_DEV_MODE}/posts/like/${postId}/${userId}`,
+        {
+          reactionType: _reactionType,
+        }
       );
+      socket.emit(LIKE_POST, {
+        postId,
+        userId,
+      });
       if (response.status === 200) {
         const updatedPost = response.data.post;
-        console.log(updatedPost, ' updatePost: ');
+        console.log(updatedPost, " updatePost: ");
         if (updatedPost) {
-          console.log(updatedPost.id, 'LIKE: ', updatedPost.likes?.length);
+          console.log(updatedPost.id, "LIKE: ", updatedPost.likes?.length);
         }
-        console.log('posts', posts);
-        setPosts(prevPosts => {
+        console.log("posts", posts);
+        setPosts((prevPosts) => {
           const newPosts = [...prevPosts];
-          newPosts.forEach(post => {
+          newPosts.forEach((post) => {
             if (post._id === updatedPost._id) {
-              console.log('LIKE: ', post.likes?.length, 'UPDATE POST: ', updatedPost.likes?.length);
+              console.log(
+                "LIKE: ",
+                post.likes?.length,
+                "UPDATE POST: ",
+                updatedPost.likes?.length
+              );
               post.likes = updatedPost.likes;
               //post = updatePost not update likes properties of the post
-              console.log(post._id, ' LIKE: ', post.likes?.length,);
+              console.log(post._id, " LIKE: ", post.likes?.length);
             }
           });
-          newPosts.forEach(post => {
-            console.log('POST: ', post._id, post.likes?.length);
-          })
+          newPosts.forEach((post) => {
+            console.log("POST: ", post._id, post.likes?.length);
+          });
           return newPosts;
-        })
+        });
         // setIsLiked(updatedPost.likes.some((like) => like.user === userId));
       }
     } catch (error) {
@@ -159,14 +173,15 @@ const DetailPost = () => {
   return (
     <View style={{
       marginTop: 10,
-      backgroundColor: '#fff'
+      backgroundColor: '#fff',
+      flex: 1
     }}>
       <View key={post?._id}>
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            
+            paddingTop: 10
           }}
         >
           <View
@@ -179,14 +194,14 @@ const DetailPost = () => {
           >
             <Image
               style={{ width: 60, height: 60, borderRadius: 30 }}
-              source={{ uri: post?.user?.profileImage || null }}
+              source={{ uri: post?.user?.profileImage  }}
             />
 
             <View style={{ flexDirection: "column", gap: 2 }}>
               <Text style={{ fontSize: 15, fontWeight: "600" }}>
                 {post?.user?.name}
               </Text>
-              <Text
+              {/* <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={{
@@ -197,7 +212,7 @@ const DetailPost = () => {
                 }}
               >
                 Engineer Graduate | LinkedIn Member
-              </Text>
+              </Text> */}
               <Text style={{ color: "gray" }}>
                 {moment(post?.createdAt).format("MMMM Do YYYY")}
               </Text>
@@ -224,26 +239,26 @@ const DetailPost = () => {
                 marginRight: 10,
               }}
             >
-              <Entypo name="dots-three-vertical" size={20} color="black" />
+              {/* <Entypo name="dots-three-vertical" size={20} color="black" /> */}
             </Pressable>
           </View>
-          <Pressable style={{ marginRight: 10 }}>
+          {/* <Pressable style={{ marginRight: 10 }}>
             <Entypo name="dots-three-horizontal" size={20} color="gray" />
-          </Pressable>
+          </Pressable> */}
         </View>
 
-        <Text style={{ fontSize: 16, lineHeight: 24, marginTop: 10 }}>
+        <Text style={{ fontSize: 16, lineHeight: 24, marginTop: 10, paddingLeft: 10 }}>
           {post?.description}
         </Text>
         {post?.imageUrl && (
           <Image
-            style={{ width: "100%", height: 200, borderRadius: 10, marginTop: 10 }}
+            style={{ width: "100%", height: 200, marginTop: 10 }}
             source={{ uri: post?.imageUrl }}
           />
         )}
-
-        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
-          <Text style={{ color: "gray" }}>{post?.likes?.length} Likes</Text>
+       
+        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10, alignItems: 'center', paddingHorizontal: 10, paddingVertical: 10}}>
+        <MostReaction item={post}/>
           <Text style={{ color: "gray" }}>{post?.comments?.length} Comments</Text>
         </View>
 
@@ -262,26 +277,15 @@ const DetailPost = () => {
             paddingVertical: 10,
           }}
         >
-          <Pressable
-            onPress={() => handleLikePost(post?._id)}
-            style={{ flexDirection: "row", alignItems: "center" }}
-          >
-            <AntDesign
-              style={{ textAlign: "center" }}
-              name="like2"
-              size={24}
-              color={isLiked ? "#0072b1" : "gray"}
-            />
-            <Text
-              style={{
-                marginLeft: 4,
-                fontSize: 14,
-                color: isLiked ? "#2078F4" : "gray",
-              }}
-            >
-              Like
-            </Text>
-          </Pressable>
+        <ReactionBox
+                reactionType={
+                  post?.likes?.find((item) => item?.user === userId)
+                    ?.reactionType
+                }
+                pressLike={(_reactionType) =>
+                  handleLikePost(post?._id, _reactionType)
+                }
+              />
           <Pressable
             style={{ flexDirection: "row", alignItems: "center" }}
             onPress={() => handleComment(post?._id)}
@@ -326,6 +330,7 @@ const DetailPost = () => {
               marginLeft: 20,
               marginVertical: 10,
               width: 310,
+              height: 20
             }}
             placeholder="Comment"
           />
@@ -335,10 +340,11 @@ const DetailPost = () => {
               marginRight: 20,
             }}
           >
-            <FontAwesome name="send" size={20} color="blue" />
+            <FontAwesome name="send" size={20} color="#007bff" />
           </Pressable>
         </View>
       </View>
+      {/* <ScrollView> */}
       <FlatList
         data={post?.comments}
         renderItem={({ item }) => (
@@ -368,16 +374,17 @@ const DetailPost = () => {
           </View>
         )}
         keyExtractor={(item) => item._id}
-        ListFooterComponent={() => (
-          <View
-            style={{
-              paddingVertical: 20,
-              borderTopWidth: 1,
-              borderColor: "#CED0CE",
-            }}
-          ></View>
-        )}
+        // ListFooterComponent={() => (
+        //   <View
+        //     style={{
+        //       paddingVertical: 50,
+        //       borderTopWidth: 1,
+        //       borderColor: "#CED0CE",
+        //     }}
+        //   ></View>
+        // )}
       />
+      {/* </ScrollView> */}
     </View>
   );
 };

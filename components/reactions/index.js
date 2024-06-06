@@ -16,7 +16,7 @@ import { PanGestureHandler } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
 import { Text } from "react-native";
 
-const items = [
+export const items = [
   { emoji: <EmojiLike />, title: "like", color: "rgb(32, 120, 244)" },
   { emoji: <EmojiLove />, title: "love", color: "rgb(243, 62, 88)" },
   { emoji: <EmojiCare />, title: "care", color: "rgb(247, 177, 37)" },

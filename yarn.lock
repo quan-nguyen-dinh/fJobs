@@ -7629,6 +7629,11 @@ rc@~1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-content-loader@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/react-content-loader/-/react-content-loader-7.0.0.tgz#785780d10ff40bb5f54ba220ed51e4ad76f13507"
+  integrity sha512-xaBwpO7eiJyEc4ndym+g6wcruV9W2y3DKqbw4U48QFBsv0IeAVZO+aCUb8GptlDLWM8n5zi2HcFSGlj5r+53Tg==
+
 react-devtools-core@^4.27.2:
   version "4.28.5"
   resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.28.5.tgz#c8442b91f068cdf0c899c543907f7f27d79c2508"

@@ -11,10 +11,17 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import jwt_decode from "jwt-decode";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CustomCallControls, { reactions } from "../../../components/CustomCallControl";
+import CustomCallControls, {
+  reactions,
+} from "../../../components/CustomCallControl";
 import CustomTopView from "../../../components/CustomTopView";
 import ChatView from "../../../components/ChatView";
 import CustomBottomSheet from "../../../components/CustomBottomSheet";
+import { WaitingCall } from "./WaitingCall";
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 // import { OverlayProvider } from 'stream-chat-expo';
 // const apiKey = EXPO_PUBLIC_STREAM_API_KEY;
 // const userId = '660fbfedf1c4f8e6464698aa';
@@ -25,8 +32,8 @@ import CustomBottomSheet from "../../../components/CustomBottomSheet";
 // const client = new StreamVideoClient({ apiKey, user, token });
 // const call = client.call('default', callId);
 // call.join({ create: true });
-const WIDTH = Dimensions.get('window').width;
-const HEIGHT = Dimensions.get('window').height;
+const WIDTH = Dimensions.get("window").width;
+const HEIGHT = Dimensions.get("window").height;
 
 export default function index() {
   const [client, setClient] = useState(null);
@@ -72,11 +79,20 @@ export default function index() {
           user,
           token: tokenStream,
         });
-        const call = client.call(
-          "default",
-          "default_098a1214-56c8-4c33-b842-8ec1864ec932"
-        );
-        await call.join({ create: true });
+        const call = client.call("audio_room", "default_call-to-someone");
+        // await call.join({ create: true });
+        const res = await call.create({
+          ring: true,
+          data: {
+            members: [
+              { user_id: userId },
+              { user_id: "6659dfd72de3126f096e4ff2" },
+            ],
+          },
+        });
+        console.log("CALL RAPPER CREATE: ", call.isCreatedByMe);
+        console.log("CALL CALLING STATE: ", call.state.callingState);
+        console.log("RESSS: ", res);
         setCall(call);
         setClient(client);
       } catch (e) {
@@ -86,40 +102,40 @@ export default function index() {
     fetch();
   }, []);
 
-  useEffect(()=> {
-    if(client) {
-      const unsubscribe = client?.on('all', (event) => {
+  useEffect(() => {
+    if (client) {
+      const unsubscribe = client?.on("all", (event) => {
         console.log(event);
-  
-        if (event.type === 'call.reaction_new') {
+
+        if (event.type === "call.reaction_new") {
           console.log(`New reaction: ${event.reaction}`);
         }
-  
-        if (event.type === 'call.session_participant_joined') {
+
+        if (event.type === "call.session_participant_joined") {
           console.log(`New user joined the call: ${event.participant}`);
           const user = event.participant.user.name;
           Toast.show({
-            text1: 'User joined',
+            text1: "User joined",
             text2: `Say hello to ${user} 👋`,
           });
         }
-  
-        if (event.type === 'call.session_participant_left') {
+
+        if (event.type === "call.session_participant_left") {
           console.log(`Someone left the call: ${event.participant}`);
           const user = event.participant.user.name;
           Toast.show({
-            text1: 'User left',
+            text1: "User left",
             text2: `Say goodbye to ${user} 👋`,
           });
         }
       });
-  
+
       // Stop the listener when the component unmounts
       return () => {
         unsubscribe();
       };
     }
-  }, [client])
+  }, [client]);
   // Conditionally render the correct layout
   const goToHomeScreen = async () => {
     router.back();
@@ -131,9 +147,9 @@ export default function index() {
       message: `Join my meeting: myapp://(inside)/(room)/${id}`,
     });
   };
-
+  const insets = useSafeAreaInsets();
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: insets.top }}>
       {!client && (
         <View
           style={{
@@ -149,21 +165,7 @@ export default function index() {
         <StreamVideo client={client}>
           <StreamCall call={call}>
             <View style={styles.container}>
-              <CallContent
-                onHangupCallHandler={goToHomeScreen}
-                CallControls={CustomCallControls}
-                CallTopView={CustomTopView}
-                supportedReactions={reactions}
-                layout="grid"
-              />
-
-              {WIDTH > HEIGHT ? (
-                <View style={styles.videoContainer}>
-                  <ChatView channelId={"default_098a1214-56c8-4c33-b842-8ec1864ec932"} />
-                </View>
-              ) : (
-                <CustomBottomSheet channelId={"default_098a1214-56c8-4c33-b842-8ec1864ec932"} />
-              )}
+              <WaitingCall />
             </View>
           </StreamCall>
         </StreamVideo>

@@ -6,8 +6,7 @@ const CustomButton = ({ emoji, text, color, ...rest }) => {
     <TouchableOpacity {...rest} style={styles.root} activeOpacity={0.7}>
       <View style={styles.container}>
         {emoji}
-        <View style={{ paddingHorizontal: 2 }} />
-        <Text style={[styles.text, { color: color }]}>{text}</Text>
+        {text && <Text style={[styles.text, { color: color }]}>{text}</Text>}
       </View>
     </TouchableOpacity>
   );
@@ -24,6 +23,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
+    paddingLeft: 2,
     textTransform: "capitalize",
     fontSize: 12,
   },

@@ -232,7 +232,7 @@ const ChatDetail = () => {
             />
           </View>
         ) : <View>
-          <Pressable onPress={()=>router.replace('/(main)/(call)')}>
+          <Pressable onPress={()=>router.push('/(main)/(call)')}>
            <Text>Video call </Text>
           </Pressable>
         </View>,
@@ -296,7 +296,7 @@ const ChatDetail = () => {
   };
   console.log("userid GLOBAL---------------: ", userId);
   return (
-    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "#F0F0F0" }}>
+    <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView
         ref={scrollViewRef}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -415,7 +415,6 @@ const ChatDetail = () => {
           paddingVertical: 10,
           borderTopWidth: 1,
           borderTopColor: "#dddddd",
-          marginBottom: showEmojiSelector ? 0 : 25,
         }}
       >
         <Entypo
@@ -449,20 +448,20 @@ const ChatDetail = () => {
           }}
         >
           <Entypo onPress={pickImage} name="camera" size={24} color="gray" />
-
-          <Feather name="mic" size={24} color="gray" />
+{/* 
+          <Feather name="mic" size={24} color="gray" /> */}
         </View>
 
         <Pressable
+          disabled={!message}
           onPress={() => handleSend("text")}
           style={{
-            backgroundColor: "#007bff",
             paddingVertical: 8,
             paddingHorizontal: 12,
             borderRadius: 20,
           }}
         >
-          <Text style={{ color: "white", fontWeight: "bold" }}>Send</Text>
+          <Ionicons name="send" size={24} color={message ? "#007bff" : 'gray'} disabled={!message}/>
         </Pressable>
       </View>
 

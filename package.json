@@ -45,6 +45,7 @@
     "mongodb": "^6.6.0",
     "moti": "^0.29.0",
     "react": "18.2.0",
+    "react-content-loader": "^7.0.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.10",
     "react-native-dotenv": "^3.4.11",
