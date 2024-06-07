@@ -57,7 +57,8 @@ class SiteController {
       await client.upsertUser({
         id: newUser._id.toString(),
         email,
-        name: email,
+        image: profileImage,
+        name: name,
       });
 
     // Create token for user

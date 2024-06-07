@@ -90,7 +90,9 @@ const index = () => {
     }
   };
   return (
-    <View>
+    <View style={{
+      flex: 1
+    }}>
       <Pressable
         onPress={() => router.push("/network/connections")}
         style={{

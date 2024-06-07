@@ -69,7 +69,7 @@ function index() {
         renderItem={({item}) => (
           <MessageItem item={item}/>
         )}
-        keyExtractor={(item, index) => item._id}
+        keyExtractor={(item) => item._id}
       />
     </View>
   );
@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: '#fff'
   },
   searchInput: {
     borderWidth: 1,

@@ -18,10 +18,13 @@ import CustomTopView from "../../../components/CustomTopView";
 import ChatView from "../../../components/ChatView";
 import CustomBottomSheet from "../../../components/CustomBottomSheet";
 import { WaitingCall } from "./WaitingCall";
+import axios from "axios";
+import { REACT_APP_DEV_MODE } from "@env";
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
 // import { OverlayProvider } from 'stream-chat-expo';
 // const apiKey = EXPO_PUBLIC_STREAM_API_KEY;
 // const userId = '660fbfedf1c4f8e6464698aa';
@@ -40,7 +43,8 @@ export default function index() {
   const [call, setCall] = useState(null);
   const segments = useSegments();
   const router = useRouter();
-
+  const callProvider = useSelector((state) => state.call);
+  console.log("CALLLL-------------------------: ", callProvider);
   // Navigate the user to the correct page based on their authentication state
   // useEffect(() => {
   //   if (!initialized) return;
@@ -79,14 +83,37 @@ export default function index() {
           user,
           token: tokenStream,
         });
-        const call = client.call("audio_room", "default_call-to-someone");
+        const call = client.call(
+          callProvider.callType === "audio" ? "audio_room" : "default",
+          `${userId}-${callProvider.receiptUserId}-${Date.now()}`
+        );
+        const recieptUser = await axios.get(
+          `${REACT_APP_DEV_MODE}/profile/${callProvider.receiptUserId}`
+        );
+        const recieptUserData = recieptUser.data.user;
+        console.log("RECIEPT USER: ", recieptUserData?.profileImage);
+        const requestUser = await axios.get(
+          `${REACT_APP_DEV_MODE}/profile/${userId}`
+        );
+        const requestUserData = requestUser.data.user;
         // await call.join({ create: true });
+        console.log("REQUEST USER: ", requestUserData?.profileImage);
         const res = await call.create({
           ring: true,
           data: {
             members: [
-              { user_id: userId },
-              { user_id: "6659dfd72de3126f096e4ff2" },
+              {
+                user_id: userId,
+                custom: {
+                  image: requestUserData?.profileImage,
+                },
+              },
+              {
+                user_id: callProvider.receiptUserId,
+                custom: {
+                  image: recieptUserData?.profileImage,
+                },
+              },
             ],
           },
         });

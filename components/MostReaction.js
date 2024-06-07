@@ -43,7 +43,6 @@ export default MostReaction = ({ item }) => {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          gap: 6,
         }}
       >
        {
@@ -51,7 +50,7 @@ export default MostReaction = ({ item }) => {
           color={item.color}
           emoji={item?.emoji}
         />))
-       }<Text style={{ color: "black" }}>{item?.likes?.length}</Text>
+       }<Text style={{ color: "black", paddingLeft: 10 }}>{item?.likes?.length}</Text>
       </Pressable>
     );
   };

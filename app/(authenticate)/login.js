@@ -70,7 +70,6 @@ const login = () => {
   const toggleSwitch = () => {
     setIsEnabled(previousState => !previousState);
     const selectedLanguage = isEnabled ? 'en' : 'vn';
-    console.log('selectedLanauge: ', selectedLanguage);
     dispatch(changeLocale(selectedLanguage));
   };
   // const count = useSelector((state) => state.counter.value)

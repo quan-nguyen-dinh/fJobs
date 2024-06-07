@@ -82,9 +82,9 @@ export default function Layout() {
           headerShown: false,
           tabBarIcon: ({ focused }) =>
             focused ? (
-              <Ionicons name="people" size={24} color="black" />
+              <Ionicons name="chatbubble-sharp" size={24} color="black" />
             ) : (
-              <Ionicons name="people-outline" size={24} color="black" />
+              <Ionicons name="chatbubble-outline" size={24} color="black" />
             ),
         }}
         backBehavior="history"

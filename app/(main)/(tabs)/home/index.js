@@ -218,13 +218,12 @@ const index = () => {
           padding: 10,
           flexDirection: "row",
           alignItems: "center",
-          gap: 6,
         }}
       >
         {mustRenderReaction.map((item) => (
           <CustomButton color={item.color} emoji={item?.emoji} />
         ))}
-        <Text style={{ color: "black" }}>{item?.likes?.length}</Text>
+        <Text style={{ color: "black", paddingLeft: 5 }}>{item?.likes?.length}</Text>
       </Pressable>
     );
   };
@@ -436,7 +435,11 @@ const index = () => {
                   source={{ uri: item?.imageUrl }}
                 />
               )}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10, alignItems: 'center', paddingRight: 10}}>
               <RenderMostReaction item={item} />
+          <Text style={{ color: "gray" }}>{item?.comments?.length} Comments</Text>
+        </View>
+             
               <View
                 style={{
                   flexDirection: "row",
@@ -517,17 +520,6 @@ const index = () => {
             />
           )}
           keyExtractor={(item) => item._id}
-          // ListFooterComponent={() => (
-          //   <View
-          //     style={{
-          //       paddingVertical: 20,
-          //       borderTopWidth: 1,
-          //       borderColor: "#CED0CE",
-          //     }}
-          //   >
-          //     <ActivityIndicator animating size="large" />
-          //   </View>
-          // )}
         />
       )}
       <Modal

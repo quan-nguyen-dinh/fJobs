@@ -15,6 +15,7 @@ import React, {
   useLayoutEffect,
   useEffect,
   useRef,
+  useCallback,
 } from "react";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,7 +29,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import jwt_decode from "jwt-decode";
 import { REACT_APP_DEV_MODE } from "@env";
 import axios from "axios";
-
+import { Zocial } from '@expo/vector-icons';
+import { useDispatch, useSelector } from "react-redux";
+import { setCall } from "../../../../store/call.js";
 const ChatDetail = () => {
   const [showEmojiSelector, setShowEmojiSelector] = useState(false);
   const [selectedMessages, setSelectedMessages] = useState([]);
@@ -38,8 +41,10 @@ const ChatDetail = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const [message, setMessage] = useState("");
   const { slug: recepientId } = useLocalSearchParams();
+  const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
-
+  const call = useSelector((state) => state.call.callType);
+  console.log('CALLLL-------------------------: ', call);
   useEffect(() => {
     scrollToBottom();
   }, []);
@@ -172,6 +177,14 @@ const ChatDetail = () => {
     }
   };
 
+  const handleCall = useCallback((media)=>{
+    dispatch(setCall({
+      _callType: media,
+      _receiptUserId: recepientId
+    }))
+    router.replace('/(main)/(call)');
+  }, [call]);
+
   useEffect(() => {
     socket.on("receipt-message", (data) => {
       console.log("RECIPET DATA: ", data);
@@ -231,9 +244,12 @@ const ChatDetail = () => {
               color="black"
             />
           </View>
-        ) : <View>
-          <Pressable onPress={()=>router.push('/(main)/(call)')}>
-           <Text>Video call </Text>
+        ) : <View style={{flexDirection: 'row', alignItems: 'center', gap: 20}}>
+          <Pressable onPress={() => handleCall('audio')}>
+            <Zocial name="call" size={22} color="#007bff" />
+          </Pressable>
+          <Pressable onPress={()=> handleCall('video')}>
+          <Ionicons name="videocam" size={24} color="#007bff" />
           </Pressable>
         </View>,
     });
@@ -354,11 +370,9 @@ const ChatDetail = () => {
           }
 
           if (item.messageType === "image") {
-            const baseUrl =
-              "/Users/sujananand/Build/messenger-project/api/files/";
             const imageUrl = item.imageUrl;
             const filename = imageUrl.split("/").pop();
-            const source = { uri: baseUrl + filename };
+            const source = imageUrl;
             return (
               <Pressable
                 key={index}
@@ -383,10 +397,12 @@ const ChatDetail = () => {
                 ]}
               >
                 <View>
-                  <Image
-                    source={source || null}
+                  {source && <Image
+                    source={{
+                      uri: source
+                    }}
                     style={{ width: 200, height: 200, borderRadius: 7 }}
-                  />
+                  />}
                   <Text
                     style={{
                       textAlign: "right",
